@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMZA — Gestor de Etiquetas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════
+           DESIGN SYSTEM — Industrial Dark
+           ═══════════════════════════════════════════ */
+        :root {
+            --bg-0: #08080a;
+            --bg-1: #0e0e11;
+            --bg-2: #151518;
+            --bg-3: #1c1c20;
+            --bg-4: #232328;
+            --bg-hover: #28282e;
+            --border-subtle: #222228;
+            --border: #2c2c33;
+            --border-focus: #5b5bf0;
+            --text-0: #fafafa;
+            --text-1: #d4d4d8;
+            --text-2: #a1a1aa;
+            --text-3: #71717a;
+            --text-4: #52525b;
+            --accent: #5b5bf0;
+            --accent-hover: #6e6ef7;
+            --accent-glow: rgba(91, 91, 240, 0.12);
+            --accent-glow-strong: rgba(91, 91, 240, 0.25);
+            --green: #34d399;
+            --green-bg: rgba(52, 211, 153, 0.08);
+            --green-border: rgba(52, 211, 153, 0.2);
+            --amber: #fbbf24;
+            --amber-bg: rgba(251, 191, 36, 0.08);
+            --amber-border: rgba(251, 191, 36, 0.2);
+            --red: #f87171;
+            --red-bg: rgba(248, 113, 113, 0.08);
+            --red-border: rgba(248, 113, 113, 0.2);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --radius-lg: 14px;
+            --radius-xl: 18px;
+            --font: 'Outfit', system-ui, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-0);
+            color: var(--text-0);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--accent-glow-strong);
+            color: var(--accent);
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-4); border-radius: 3px; }
+
+        /* ═══ LAYOUT ═══ */
+        .shell {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+
+        /* ═══ SIDEBAR ═══ */
+        .sidebar {
+            background: var(--bg-1);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 50;
+        }
+
+        .s-brand {
+            padding: 28px 22px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .s-brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: var(--radius-sm);
+            display: grid;
+            place-items: center;
+            font-family: var(--mono);
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .s-brand-name {
+            font-family: var(--mono);
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 2.5px;
+        }
+
+        .s-brand-sub {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-top: 1px;
+            letter-spacing: 0.2px;
+        }
+
+        .s-nav {
+            flex: 1;
+            padding: 0 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .s-label {
+            padding: 18px 12px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            color: var(--text-4);
+        }
+
+        .s-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13.5px;
+            font-weight: 450;
+            color: var(--text-2);
+            transition: all 0.15s ease;
+            border: 1px solid transparent;
+            user-select: none;
+        }
+
+        .s-link:hover { background: var(--bg-3); color: var(--text-0); }
+
+        .s-link.active {
+            background: var(--accent-glow);
+            color: var(--accent-hover);
+            border-color: rgba(91, 91, 240, 0.15);
+        }
+
+        .s-link svg { width: 17px; height: 17px; flex-shrink: 0; opacity: 0.7; }
+        .s-link.active svg { opacity: 1; }
+
+        .s-badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: white;
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 1px 8px;
+            border-radius: 99px;
+            font-family: var(--mono);
+        }
+
+        .s-footer {
+            padding: 16px 22px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .s-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11.5px;
+            color: var(--text-3);
+        }
+
+        .s-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--text-4);
+            flex-shrink: 0;
+        }
+
+        .s-dot.on {
+            background: var(--green);
+            box-shadow: 0 0 6px rgba(52, 211, 153, 0.5);
+        }
+
+        /* ═══ MAIN ═══ */
+        .main {
+            padding: 36px 40px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        /* ═══ VIEWS ═══ */
+        .v { display: none; animation: fadeUp 0.25s ease; }
+        .v.on { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ═══ HEADER ═══ */
+        .pg-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .pg-head h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+        .pg-head .sub { color: var(--text-3); font-size: 13px; margin-top: 3px; }
+
+        .head-actions { display: flex; gap: 8px; align-items: center; }
+
+        /* ═══ BUTTONS ═══ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid transparent;
+            outline: none;
+            white-space: nowrap;
+        }
+
+        .btn svg { width: 15px; height: 15px; }
+
+        .btn-accent {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .btn-accent:hover { background: var(--accent-hover); box-shadow: 0 2px 12px rgba(91,91,240,0.25); transform: translateY(-1px); }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-2);
+            border-color: var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-3); color: var(--text-0); }
+
+        .btn-red {
+            background: var(--red-bg);
+            color: var(--red);
+            border-color: var(--red-border);
+        }
+        .btn-red:hover { background: rgba(248,113,113,0.14); }
+
+        .btn:disabled { opacity: 0.4; pointer-events: none; }
+
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-block { width: 100%; }
+
+        /* ═══ INPUTS ═══ */
+        .fg { margin-bottom: 18px; }
+        .fg label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-2);
+            margin-bottom: 5px;
+            letter-spacing: 0.2px;
+        }
+
+        .fg input, .fg select, .fg textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-0);
+            font-family: var(--font);
+            font-size: 13.5px;
+            transition: all 0.15s ease;
+            outline: none;
+        }
+
+        .fg input:focus, .fg select:focus, .fg textarea:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .fg .hint { font-size: 11px; color: var(--text-4); margin-top: 4px; }
+
+        .input-suffix-wrap {
+            display: flex;
+        }
+
+        .input-suffix-wrap input { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+
+        .input-suffix {
+            padding: 10px 12px;
+            background: var(--bg-3);
+            border: 1px solid var(--border);
+            border-left: none;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            color: var(--text-3);
+            font-size: 12px;
+            font-family: var(--mono);
+            white-space: nowrap;
+        }
+
+        /* ═══ STATS ═══ */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 26px;
+        }
+
+        .stat {
+            background: var(--bg-2);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+        }
+
+        .stat-label {
+            font-size: 10.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-4);
+            margin-bottom: 6px;
+        }
+
+        .stat-val {
+            font-size: 26px;
+            font-weight: 700;
+            font-family: var(--mono);
+            letter-spacing: -0.5px;
+        }
+
+        /* ═══ SEARCH ═══ */
+        .search-wrap {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-4);
+        }
+
+        .search-wrap input {
+            width: 100%;
+            padding: 11px 16px 11px 40px;
+            background: var(--bg-2);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            color: var(--text-0);
+            font-family: var(--font);
+            font-size: 13.5px;
+            outline: none;
+            transition: all 0.15s ease;
+        }
+
+        .search-wrap input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .search-wrap input::placeholder { color: var(--text-4); }
+
+        /* ═══ PRODUCTS GRID ═══ */
+        .p-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+        }
+
+        .p-card {
+            background: var(--bg-2);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .p-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25), 0 0 0 1px var(--accent-glow);
+        }
+
+        .p-card-img {
+            width: 100%;
+            height: 160px;
+            background: var(--bg-3);
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .p-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .p-card-img .no-img { color: var(--text-4); font-size: 12px; }
+
+        .p-card-body { padding: 14px 16px; }
+
+        .p-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 3px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .p-card-sku {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--accent);
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .p-card-price {
+            font-family: var(--mono);
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .p-card-price .curr {
+            font-size: 11px;
+            color: var(--text-3);
+            font-weight: 400;
+            margin-left: 3px;
+        }
+
+        .p-card-stock {
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--text-3);
+        }
+
+        .p-card-actions {
+            padding: 10px 16px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 6px;
+        }
+
+        .p-card-actions .btn { flex: 1; font-size: 11.5px; padding: 7px 10px; }
+
+        /* ═══ CONNECT CARD ═══ */
+        .connect-box {
+            max-width: 500px;
+            margin: 60px auto;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 44px;
+            text-align: center;
+        }
+
+        .connect-box h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .connect-box > p { color: var(--text-3); font-size: 14px; margin-bottom: 32px; line-height: 1.6; }
+
+        /* ═══ SLIDE PANEL ═══ */
+        .panel-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 90;
+            backdrop-filter: blur(4px);
+        }
+
+        .panel-overlay.on { display: block; }
+
+        .panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 520px;
+            height: 100vh;
+            background: var(--bg-1);
+            border-left: 1px solid var(--border);
+            z-index: 91;
+            overflow-y: auto;
+            box-shadow: -12px 0 40px rgba(0,0,0,0.35);
+        }
+
+        .panel.on { display: block; animation: slideIn 0.2s ease; }
+
+        @keyframes slideIn {
+            from { transform: translateX(40px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .panel-head {
+            position: sticky;
+            top: 0;
+            background: var(--bg-1);
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 5;
+        }
+
+        .panel-head h3 { font-size: 15px; font-weight: 600; }
+
+        .panel-body { padding: 24px; }
+
+        .panel-img {
+            width: 100%;
+            height: 200px;
+            background: var(--bg-3);
+            border-radius: var(--radius);
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .panel-img img { width: 100%; height: 100%; object-fit: cover; }
+
+        .panel-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+        .panel-actions .btn { flex: 1; }
+
+        /* ═══ LABEL ═══ */
+        .label-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        .label-form { }
+
+        .label-preview-box {
+            background: var(--bg-2);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: sticky;
+            top: 36px;
+        }
+
+        .label-preview-tag {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-4);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* ACTUAL LABEL (white paper) */
+        .lbl {
+            background: #ffffff;
+            color: #111;
+            width: 380px;
+            padding: 28px 24px;
+            border-radius: 3px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+            font-family: var(--font);
+        }
+
+        .lbl-name {
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            color: #444;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .lbl-sku {
+            text-align: center;
+            font-family: var(--mono);
+            margin-bottom: 14px;
+        }
+
+        .lbl-sku .pre { font-size: 14px; color: #888; font-weight: 400; }
+        .lbl-sku .val { font-size: 30px; font-weight: 700; letter-spacing: 1px; }
+
+        .lbl-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 4px;
+        }
+
+        .lbl-cell {
+            text-align: center;
+            padding: 8px 6px;
+        }
+
+        .lbl-cell .amt { font-size: 15px; font-weight: 700; margin-bottom: 1px; }
+        .lbl-cell .lbl-sub { font-size: 9px; font-weight: 600; color: #777; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .lbl-promo-bar {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            padding: 12px 0 8px;
+            margin-top: 8px;
+            border-top: 1.5px solid #e0e0e0;
+        }
+
+        .lbl-specs {
+            text-align: center;
+            font-size: 10.5px;
+            color: #777;
+            padding-top: 14px;
+            margin-top: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        .lbl-brand {
+            text-align: center;
+            margin-top: 14px;
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #444;
+        }
+
+        .lbl-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* promo toggle */
+        .promo-box {
+            background: var(--bg-3);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-top: 6px;
+        }
+
+        .promo-box-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .promo-box-head span {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--amber);
+        }
+
+        .chk {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .chk input { accent-color: var(--accent); width: 15px; height: 15px; }
+
+        /* ═══ SETTINGS ═══ */
+        .sect {
+            background: var(--bg-2);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .sect h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+        .sect .desc { font-size: 12px; color: var(--text-4); margin-bottom: 18px; }
+
+        .sect-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .sect-row:last-child { border-bottom: none; }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: 10.5px;
+            font-weight: 600;
+            font-family: var(--mono);
+        }
+
+        .tag-g { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+        .tag-r { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+        .tag-a { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+
+        /* ═══ TOASTS ═══ */
+        .toasts {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .toast {
+            background: var(--bg-3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 18px;
+            font-size: 12.5px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: toastIn 0.25s ease;
+            min-width: 260px;
+        }
+
+        .toast.ok { border-left: 3px solid var(--green); }
+        .toast.err { border-left: 3px solid var(--red); }
+        .toast.inf { border-left: 3px solid var(--accent); }
+
+        @keyframes toastIn {
+            from { transform: translateX(80px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ═══ EMPTY ═══ */
+        .empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-4);
+        }
+
+        .empty svg { width: 40px; height: 40px; margin-bottom: 14px; opacity: 0.35; }
+        .empty h3 { font-size: 15px; color: var(--text-2); margin-bottom: 4px; }
+        .empty p { font-size: 12.5px; }
+
+        /* ═══ SPINNER ═══ */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px;
+            gap: 12px;
+            color: var(--text-3);
+            font-size: 13px;
+        }
+
+        /* ═══ PRINT ═══ */
+        @media print {
+            body * { visibility: hidden !important; }
+            .lbl, .lbl * { visibility: visible !important; }
+            .lbl {
+                position: fixed !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                box-shadow: none !important;
+                width: 90mm !important;
+                padding: 6mm !important;
+            }
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 860px) {
+            .shell { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .main { padding: 20px 16px; }
+            .label-area { grid-template-columns: 1fr; }
+            .panel { width: 100%; }
+            .lbl { width: 100%; }
+            .p-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <!-- ═══ SIDEBAR ═══ -->
+        <aside class="sidebar">
+            <div class="s-brand">
+                <div class="s-brand-icon">C</div>
+                <div>
+                    <div class="s-brand-name" id="brandName">COMZA</div>
+                    <div class="s-brand-sub">Gestor de Etiquetas</div>
+                </div>
+            </div>
+
+            <nav class="s-nav">
+                <div class="s-label">Principal</div>
+                <div class="s-link active" data-v="products" onclick="go('products')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    Productos
+                    <span class="s-badge" id="navCount">0</span>
+                </div>
+                <div class="s-link" data-v="label" onclick="go('label')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="1"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="12" y2="14"/></svg>
+                    Imprimir Etiqueta
+                </div>
+
+                <div class="s-label">Sistema</div>
+                <div class="s-link" data-v="settings" onclick="go('settings')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    Configuración
+                </div>
+            </nav>
+
+            <div class="s-footer">
+                <div class="s-status">
+                    <span class="s-dot" id="dot"></span>
+                    <span id="dotText">Verificando...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ═══ MAIN ═══ -->
+        <main class="main">
+
+            <!-- ── CONNECT VIEW ── -->
+            <div class="v on" id="v-connect">
+                <div class="connect-box">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" style="margin-bottom:14px"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    <h2>Configura tu conexión</h2>
+                    <p>Tu servidor necesita las credenciales de Shopify en el archivo <code style="background:var(--bg-4);padding:2px 6px;border-radius:3px;font-size:12px">.env</code>. Una vez configurado, la app se conecta automáticamente.</p>
+
+                    <div style="text-align:left; margin-bottom:24px">
+                        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;font-family:var(--mono);font-size:12px;color:var(--text-2);line-height:1.8">
+                            SHOPIFY_STORE_DOMAIN=tu-tienda<br>
+                            SHOPIFY_ACCESS_TOKEN=shpat_xxx...<br>
+                            COMPANY_NAME=COMZA<br>
+                            PORT=3000
+                        </div>
+                    </div>
+
+                    <button class="btn btn-accent btn-block" onclick="checkConnection()">
+                        Verificar Conexión
+                    </button>
+
+                    <div style="margin-top:16px">
+                        <button class="btn btn-ghost btn-sm" onclick="loadDemo()">
+                            Cargar datos de demo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── PRODUCTS VIEW ── -->
+            <div class="v" id="v-products">
+                <div class="pg-head">
+                    <div>
+                        <h1>Productos</h1>
+                        <div class="sub">Gestiona inventario y genera etiquetas</div>
+                    </div>
+                    <div class="head-actions">
+                        <button class="btn btn-ghost btn-sm" onclick="fetchProducts()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            Actualizar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-label">Productos</div>
+                        <div class="stat-val" id="sTotal">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Con SKU</div>
+                        <div class="stat-val" id="sSku">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Sin SKU</div>
+                        <div class="stat-val" id="sNoSku">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Inventario</div>
+                        <div class="stat-val" id="sInv">0</div>
+                    </div>
+                </div>
+
+                <div class="search-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="qSearch" placeholder="Buscar por nombre, SKU, tipo o marca..." oninput="filterProducts()">
+                </div>
+
+                <div class="p-grid" id="pGrid">
+                    <div class="loading"><div class="spinner"></div>Cargando productos...</div>
+                </div>
+            </div>
+
+            <!-- ── LABEL VIEW ── -->
+            <div class="v" id="v-label">
+                <div class="pg-head">
+                    <div>
+                        <h1>Imprimir Etiqueta</h1>
+                        <div class="sub">Selecciona producto o ingresa datos manualmente</div>
+                    </div>
+                </div>
+
+                <div class="label-area">
+                    <div class="label-form">
+                        <div class="fg">
+                            <label>Producto de Shopify</label>
+                            <select id="lblSelect" onchange="fillLabelFromProduct()">
+                                <option value="">— Seleccionar producto —</option>
+                            </select>
+                        </div>
+
+                        <div class="fg">
+                            <label>Nombre del producto</label>
+                            <input type="text" id="lblName" placeholder="Horno Combi Rational SCC WE 202G">
+                        </div>
+
+                        <div class="fg">
+                            <label>Condición</label>
+                            <input type="text" id="lblCond" placeholder="Reacondicionado, Nuevo, Seminuevo...">
+                        </div>
+
+                        <div class="fg">
+                            <label>SKU</label>
+                            <input type="text" id="lblSku" placeholder="E258" style="font-family:var(--mono);font-size:16px;font-weight:700">
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                            <div class="fg">
+                                <label>Precio IVA incluido</label>
+                                <input type="text" id="lblPIva" placeholder="518,400">
+                            </div>
+                            <div class="fg">
+                                <label>Precio en efectivo</label>
+                                <input type="text" id="lblPCash" placeholder="480,000">
+                            </div>
+                        </div>
+
+                        <div class="promo-box">
+                            <div class="promo-box-head">
+                                <span>🏷️ Promoción</span>
+                                <label class="chk" style="margin:0">
+                                    <input type="checkbox" id="lblHasPromo" onchange="togglePromo()">
+                                    Activar
+                                </label>
+                            </div>
+                            <div id="promoFields" style="display:none">
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                                    <div class="fg" style="margin-bottom:0">
+                                        <label>Promo IVA incluido</label>
+                                        <input type="text" id="lblPrIva" placeholder="473,000">
+                                    </div>
+                                    <div class="fg" style="margin-bottom:0">
+                                        <label>Promo en efectivo</label>
+                                        <input type="text" id="lblPrCash" placeholder="430,000">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="fg" style="margin-top:14px">
+                            <label>Especificaciones</label>
+                            <input type="text" id="lblSpecs" placeholder="Luz 220v / 1 ph / 20 Charolas / Gas">
+                        </div>
+
+                        <div class="fg">
+                            <label>Marca / Empresa</label>
+                            <input type="text" id="lblBrand">
+                        </div>
+
+                        <button class="btn btn-accent btn-block" onclick="refreshLabel()" style="margin-top:4px">
+                            Actualizar Vista Previa
+                        </button>
+                    </div>
+
+                    <!-- PREVIEW -->
+                    <div class="label-preview-box">
+                        <div class="label-preview-tag">Vista previa</div>
+
+                        <div class="lbl" id="labelPaper">
+                            <div class="lbl-name" id="L-name">Horno Combi Rational SCC WE 202G (Reacondicionado)</div>
+                            <div class="lbl-sku"><span class="pre">SKU: </span><span class="val" id="L-sku">E258</span></div>
+                            <div class="lbl-row">
+                                <div class="lbl-cell"><div class="amt" id="L-pIva">$518,400 MXN</div><div class="lbl-sub">IVA Incluido</div></div>
+                                <div class="lbl-cell"><div class="amt" id="L-pCash">$480,000 MXN</div><div class="lbl-sub">Pago en Efectivo</div></div>
+                            </div>
+                            <div id="L-promoWrap">
+                                <div class="lbl-promo-bar">Promoción</div>
+                                <div class="lbl-row">
+                                    <div class="lbl-cell"><div class="amt" id="L-prIva">$473,000 MXN</div><div class="lbl-sub">IVA Incluido</div></div>
+                                    <div class="lbl-cell"><div class="amt" id="L-prCash">$430,000 MXN</div><div class="lbl-sub">Pago en Efectivo</div></div>
+                                </div>
+                            </div>
+                            <div class="lbl-specs" id="L-specs">Luz 220v / 1 ph / 20 Charolas / Gas</div>
+                            <div class="lbl-brand" id="L-brand">COMZA</div>
+                        </div>
+
+                        <div class="lbl-actions">
+                            <button class="btn btn-accent" onclick="printLabel()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                                Imprimir
+                            </button>
+                            <button class="btn btn-ghost" onclick="downloadPNG()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Descargar PNG
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── SETTINGS VIEW ── -->
+            <div class="v" id="v-settings">
+                <div class="pg-head">
+                    <div>
+                        <h1>Configuración</h1>
+                        <div class="sub">Tu conexión y preferencias</div>
+                    </div>
+                </div>
+
+                <div class="sect">
+                    <h3>Conexión Shopify</h3>
+                    <div class="desc">Estado de la conexión con tu tienda</div>
+                    <div class="sect-row">
+                        <div>
+                            <div style="font-size:13px;font-weight:500">Tienda</div>
+                            <div style="font-size:12px;color:var(--text-3)" id="cfgStore">—</div>
+                        </div>
+                        <span class="tag tag-r" id="cfgStatus">Desconectada</span>
+                    </div>
+                    <div style="margin-top:14px">
+                        <button class="btn btn-ghost btn-sm" onclick="checkConnection()">Verificar conexión</button>
+                    </div>
+                </div>
+
+                <div class="sect">
+                    <h3>Etiquetas</h3>
+                    <div class="desc">Configuración de impresión</div>
+                    <div class="fg">
+                        <label>Nombre de empresa</label>
+                        <input type="text" id="cfgCompany" value="COMZA">
+                    </div>
+                    <div class="fg">
+                        <label>Moneda</label>
+                        <select id="cfgCurrency">
+                            <option value="MXN">MXN — Peso Mexicano</option>
+                            <option value="USD">USD — Dólar Americano</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- DETAIL PANEL -->
+    <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+    <div class="panel" id="panel">
+        <div class="panel-head">
+            <h3>Editar Producto</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closePanel()">✕</button>
+        </div>
+        <div class="panel-body" id="panelBody"></div>
+    </div>
+
+    <!-- TOASTS -->
+    <div class="toasts" id="toasts"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+    // ════════════════════════════════════════════
+    // STATE
+    // ════════════════════════════════════════════
+    const S = {
+        connected: false,
+        store: null,
+        company: 'COMZA',
+        currency: 'MXN',
+        products: [],
+        demo: false,
+    };
+
+    const API = ''; // same origin
+
+    // ════════════════════════════════════════════
+    // INIT
+    // ════════════════════════════════════════════
+    async function init() {
+        // Try auto-connect to backend
+        await checkConnection();
+    }
+
+    async function checkConnection() {
+        try {
+            const r = await fetch(API + '/api/health');
+            const d = await r.json();
+
+            if (d.connected) {
+                S.connected = true;
+                S.store = d.store;
+                S.company = d.company || 'COMZA';
+                S.demo = false;
+                updateStatus(true);
+                go('products');
+                await fetchProducts();
+                toast(`Conectado a ${S.store}`, 'ok');
+            } else {
+                updateStatus(false);
+                toast('Shopify no configurado. Revisa tu .env', 'err');
+            }
+        } catch (e) {
+            updateStatus(false);
+            // If no backend, stay on connect screen
+        }
+    }
+
+    function updateStatus(on) {
+        const dot = document.getElementById('dot');
+        const text = document.getElementById('dotText');
+        const cfgStore = document.getElementById('cfgStore');
+        const cfgStatus = document.getElementById('cfgStatus');
+
+        dot.className = 's-dot' + (on ? ' on' : '');
+        text.textContent = on ? (S.store || 'Conectado') : 'Sin conexión';
+        cfgStore.textContent = on ? S.store : 'No conectada';
+        cfgStatus.className = on ? 'tag tag-g' : 'tag tag-r';
+        cfgStatus.textContent = on ? 'Conectada' : 'Desconectada';
+
+        document.getElementById('brandName').textContent = S.company;
+        document.getElementById('cfgCompany').value = S.company;
+        document.getElementById('lblBrand').value = S.company;
+        document.getElementById('L-brand').textContent = S.company;
+    }
+
+    // ════════════════════════════════════════════
+    // NAVIGATION
+    // ════════════════════════════════════════════
+    function go(view) {
+        if (!S.connected && !S.demo && view !== 'connect' && view !== 'settings') {
+            toast('Conecta tu tienda primero', 'err');
+            return;
+        }
+
+        document.querySelectorAll('.v').forEach(v => v.classList.remove('on'));
+        document.querySelectorAll('.s-link').forEach(l => l.classList.remove('active'));
+
+        const el = document.getElementById('v-' + view);
+        if (el) el.classList.add('on');
+
+        document.querySelector(`.s-link[data-v="${view}"]`)?.classList.add('active');
+
+        if (view === 'label') populateSelect();
+    }
+
+    // ════════════════════════════════════════════
+    // PRODUCTS
+    // ════════════════════════════════════════════
+    async function fetchProducts() {
+        if (S.demo) return;
+
+        const grid = document.getElementById('pGrid');
+        grid.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando productos de Shopify...</div>';
+
+        try {
+            const r = await fetch(API + '/api/products');
+            const d = await r.json();
+
+            if (d.error) {
+                toast(d.error, 'err');
+                grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><h3>Error</h3><p>${d.error}</p></div>`;
+                return;
+            }
+
+            S.products = d.products || [];
+            render(S.products);
+        } catch (e) {
+            toast('Error al conectar con el servidor', 'err');
+            grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><h3>Error de conexión</h3><p>Verifica que el servidor esté corriendo</p></div>';
+        }
+    }
+
+    function render(products) {
+        document.getElementById('navCount').textContent = products.length;
+        document.getElementById('sTotal').textContent = products.length;
+        document.getElementById('sSku').textContent = products.filter(p => p.sku).length;
+        document.getElementById('sNoSku').textContent = products.filter(p => !p.sku).length;
+        document.getElementById('sInv').textContent = products.reduce((a, p) => a + (p.inventory_quantity || 0), 0);
+
+        const grid = document.getElementById('pGrid');
+
+        if (!products.length) {
+            grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><h3>Sin productos</h3><p>No se encontraron productos en tu tienda.</p></div>';
+            return;
+        }
+
+        grid.innerHTML = products.map(p => `
+            <div class="p-card" onclick="openEdit(${p.id})">
+                <div class="p-card-img">
+                    ${p.image
+                        ? `<img src="${p.image}" alt="" loading="lazy">`
+                        : `<div class="no-img"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`
+                    }
+                </div>
+                <div class="p-card-body">
+                    <div class="p-card-title">${esc(p.title)}</div>
+                    <div class="p-card-sku">${p.sku ? 'SKU: ' + esc(p.sku) : '<span style="color:var(--text-4)">Sin SKU</span>'}</div>
+                    <div class="p-card-price">$${fmtN(p.price)}<span class="curr">${S.currency}</span></div>
+                    <div class="p-card-stock">Stock: ${p.inventory_quantity || 0} unidades</div>
+                </div>
+                <div class="p-card-actions">
+                    <button class="btn btn-ghost" onclick="event.stopPropagation();openEdit(${p.id})">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Editar
+                    </button>
+                    <button class="btn btn-accent" onclick="event.stopPropagation();goLabel(${p.id})">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        Etiqueta
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function filterProducts() {
+        const q = document.getElementById('qSearch').value.toLowerCase().trim();
+        if (!q) { render(S.products); return; }
+        render(S.products.filter(p =>
+            p.title.toLowerCase().includes(q) ||
+            p.sku.toLowerCase().includes(q) ||
+            (p.product_type || '').toLowerCase().includes(q) ||
+            (p.vendor || '').toLowerCase().includes(q)
+        ));
+    }
+
+    // ════════════════════════════════════════════
+    // EDIT PRODUCT
+    // ════════════════════════════════════════════
+    function openEdit(id) {
+        const p = S.products.find(x => x.id === id);
+        if (!p) return;
+
+        document.getElementById('panelBody').innerHTML = `
+            <div class="panel-img">
+                ${p.image ? `<img src="${p.image}">` : '<div style="color:var(--text-4);font-size:12px">Sin imagen</div>'}
+            </div>
+            <div class="fg"><label>Nombre</label><input type="text" id="eTitle" value="${escA(p.title)}"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="fg"><label>SKU</label><input type="text" id="eSku" value="${escA(p.sku)}" style="font-family:var(--mono);font-weight:600"></div>
+                <div class="fg"><label>Tipo</label><input type="text" id="eType" value="${escA(p.product_type)}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="fg"><label>Precio</label><input type="text" id="ePrice" value="${p.price}"></div>
+                <div class="fg"><label>Precio comparativo</label><input type="text" id="eCmp" value="${p.compare_at_price || ''}"></div>
+            </div>
+            <div class="fg"><label>Marca / Proveedor</label><input type="text" id="eVendor" value="${escA(p.vendor)}"></div>
+            <div class="fg"><label>Tags</label><input type="text" id="eTags" value="${escA(p.tags)}"></div>
+            <div class="fg"><label>Inventario</label><input type="text" value="${p.inventory_quantity}" disabled style="opacity:0.5"><div class="hint">Se gestiona desde Shopify</div></div>
+
+            <div class="panel-actions">
+                <button class="btn btn-ghost" onclick="closePanel()">Cancelar</button>
+                <button class="btn btn-accent" onclick="saveProduct(${p.id}, ${p.variant_id})">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Guardar
+                </button>
+            </div>
+            <div style="text-align:center;margin-top:14px">
+                <button class="btn btn-ghost btn-sm" onclick="goLabel(${p.id});closePanel()">Ir a imprimir etiqueta →</button>
+            </div>
+        `;
+
+        document.getElementById('panel').classList.add('on');
+        document.getElementById('panelOverlay').classList.add('on');
+    }
+
+    async function saveProduct(id, variantId) {
+        const updates = {
+            title: document.getElementById('eTitle').value,
+            sku: document.getElementById('eSku').value,
+            product_type: document.getElementById('eType').value,
+            price: document.getElementById('ePrice').value,
+            compare_at_price: document.getElementById('eCmp').value || null,
+            vendor: document.getElementById('eVendor').value,
+            tags: document.getElementById('eTags').value,
+        };
+
+        // Update local
+        const idx = S.products.findIndex(p => p.id === id);
+        if (idx >= 0) S.products[idx] = { ...S.products[idx], ...updates };
+
+        if (!S.demo) {
+            try {
+                const r = await fetch(API + `/api/products/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...updates,
+                        variants: [{ id: variantId, sku: updates.sku, price: updates.price, compare_at_price: updates.compare_at_price }]
+                    }),
+                });
+                const d = await r.json();
+                if (d.error) {
+                    toast('Error Shopify: ' + JSON.stringify(d.error), 'err');
+                } else {
+                    if (idx >= 0 && d.product) S.products[idx] = d.product;
+                    toast('Producto actualizado en Shopify ✓', 'ok');
+                }
+            } catch (e) {
+                toast('Actualizado localmente, error de red', 'err');
+            }
+        } else {
+            toast('Producto actualizado (demo)', 'ok');
+        }
+
+        render(S.products);
+        closePanel();
+    }
+
+    function closePanel() {
+        document.getElementById('panel').classList.remove('on');
+        document.getElementById('panelOverlay').classList.remove('on');
+    }
+
+    // ════════════════════════════════════════════
+    // LABEL
+    // ════════════════════════════════════════════
+    function populateSelect() {
+        const sel = document.getElementById('lblSelect');
+        sel.innerHTML = '<option value="">— Seleccionar producto —</option>' +
+            S.products.map(p => `<option value="${p.id}">${p.sku ? '['+p.sku+'] ' : ''}${p.title}</option>`).join('');
+    }
+
+    function fillLabelFromProduct() {
+        const id = parseInt(document.getElementById('lblSelect').value);
+        if (!id) return;
+        const p = S.products.find(x => x.id === id);
+        if (!p) return;
+
+        document.getElementById('lblName').value = p.title;
+        document.getElementById('lblCond').value = '';
+        document.getElementById('lblSku').value = p.sku;
+        document.getElementById('lblPIva').value = fmtN(p.price);
+
+        const cash = Math.round(parseFloat(p.price) / 1.16);
+        document.getElementById('lblPCash').value = fmtN(cash.toString());
+
+        if (p.compare_at_price) {
+            document.getElementById('lblHasPromo').checked = true;
+            togglePromo();
+            document.getElementById('lblPrIva').value = fmtN(p.compare_at_price);
+            document.getElementById('lblPrCash').value = fmtN(Math.round(parseFloat(p.compare_at_price) / 1.16).toString());
+        } else {
+            document.getElementById('lblHasPromo').checked = false;
+            togglePromo();
+        }
+
+        const specs = p.body_html ? p.body_html.replace(/<[^>]*>/g, '').trim() : '';
+        document.getElementById('lblSpecs').value = specs;
+        document.getElementById('lblBrand').value = S.company;
+
+        refreshLabel();
+    }
+
+    function goLabel(id) {
+        go('label');
+        setTimeout(() => {
+            document.getElementById('lblSelect').value = id;
+            fillLabelFromProduct();
+        }, 50);
+    }
+
+    function togglePromo() {
+        document.getElementById('promoFields').style.display = document.getElementById('lblHasPromo').checked ? 'block' : 'none';
+    }
+
+    function refreshLabel() {
+        const name = document.getElementById('lblName').value;
+        const cond = document.getElementById('lblCond').value;
+        const full = cond ? `${name} (${cond})` : name;
+
+        document.getElementById('L-name').textContent = full;
+        document.getElementById('L-sku').textContent = document.getElementById('lblSku').value;
+        document.getElementById('L-pIva').textContent = `$${document.getElementById('lblPIva').value} ${S.currency}`;
+        document.getElementById('L-pCash').textContent = `$${document.getElementById('lblPCash').value} ${S.currency}`;
+
+        const promo = document.getElementById('lblHasPromo').checked;
+        document.getElementById('L-promoWrap').style.display = promo ? 'block' : 'none';
+        if (promo) {
+            document.getElementById('L-prIva').textContent = `$${document.getElementById('lblPrIva').value} ${S.currency}`;
+            document.getElementById('L-prCash').textContent = `$${document.getElementById('lblPrCash').value} ${S.currency}`;
+        }
+
+        document.getElementById('L-specs').textContent = document.getElementById('lblSpecs').value;
+        document.getElementById('L-brand').textContent = document.getElementById('lblBrand').value;
+    }
+
+    function printLabel() {
+        refreshLabel();
+        window.print();
+    }
+
+    async function downloadPNG() {
+        refreshLabel();
+        try {
+            const canvas = await html2canvas(document.getElementById('labelPaper'), { scale: 3, backgroundColor: '#ffffff' });
+            const a = document.createElement('a');
+            a.download = `etiqueta-${document.getElementById('lblSku').value || 'label'}.png`;
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+            toast('PNG descargado', 'ok');
+        } catch (e) {
+            toast('Error generando PNG', 'err');
+        }
+    }
+
+    // ════════════════════════════════════════════
+    // DEMO
+    // ════════════════════════════════════════════
+    function loadDemo() {
+        S.connected = true;
+        S.demo = true;
+        S.store = 'demo-comza.myshopify.com';
+        S.company = 'COMZA';
+        S.products = [
+            { id:1, title:'Horno Combi Rational SCC WE 202G', body_html:'Luz 220v / 1 ph / 20 Charolas / Gas', vendor:'Rational', product_type:'Hornos', tags:'hornos', sku:'E258', price:'518400.00', compare_at_price:'480000.00', inventory_quantity:2, image:null, variant_id:101, status:'active' },
+            { id:2, title:'Horno Combi Rational SCC WE 102G', body_html:'Luz 220v / 1 ph / 10 Charolas / Gas', vendor:'Rational', product_type:'Hornos', tags:'hornos', sku:'E259', price:'398000.00', compare_at_price:'365000.00', inventory_quantity:3, image:null, variant_id:102, status:'active' },
+            { id:3, title:'Refrigerador Industrial 2 Puertas', body_html:'110v / 1 ph / Acero inoxidable', vendor:'True', product_type:'Refrigeración', tags:'refrigeracion', sku:'R101', price:'45600.00', compare_at_price:'42000.00', inventory_quantity:5, image:null, variant_id:103, status:'active' },
+            { id:4, title:'Freidora Doble Canasta', body_html:'Gas LP / 2 canastas / 35 lbs', vendor:'Pitco', product_type:'Cocción', tags:'coccion', sku:'F301', price:'28900.00', compare_at_price:'25500.00', inventory_quantity:4, image:null, variant_id:104, status:'active' },
+            { id:5, title:'Mesa de Trabajo 2.4m Acero Inox', body_html:'2.4m x 0.7m / Cal 20 / Acero 304', vendor:'COMZA', product_type:'Mobiliario', tags:'mobiliario', sku:'M450', price:'12800.00', compare_at_price:null, inventory_quantity:12, image:null, variant_id:105, status:'active' },
+            { id:6, title:'Lavavajillas Industrial', body_html:'Luz 220v / 3 ph / Alto rendimiento', vendor:'Hobart', product_type:'Lavado', tags:'lavado', sku:'L200', price:'189000.00', compare_at_price:'175000.00', inventory_quantity:1, image:null, variant_id:106, status:'active' },
+            { id:7, title:'Campana de Extracción 3m', body_html:'3m / Acero inox / Con filtros', vendor:'COMZA', product_type:'Ventilación', tags:'ventilacion', sku:'C150', price:'67500.00', compare_at_price:null, inventory_quantity:3, image:null, variant_id:107, status:'active' },
+            { id:8, title:'Batidora Planetaria 60 Qt', body_html:'110v / 60 Qt / 3 velocidades', vendor:'Hobart', product_type:'Panadería', tags:'panaderia', sku:'B080', price:'95000.00', compare_at_price:'88000.00', inventory_quantity:2, image:null, variant_id:108, status:'active' },
+            { id:9, title:'Estufa Industrial 6 Quemadores', body_html:'Gas LP / 6 quemadores / Horno inferior', vendor:'COMZA', product_type:'Cocción', tags:'coccion', sku:'E600', price:'52000.00', compare_at_price:'48000.00', inventory_quantity:4, image:null, variant_id:109, status:'active' },
+            { id:10, title:'Rebanadora Automática 12"', body_html:'110v / 12" / Acero inox', vendor:'Berkel', product_type:'Procesamiento', tags:'procesamiento', sku:'S120', price:'34500.00', compare_at_price:null, inventory_quantity:6, image:null, variant_id:110, status:'active' },
+        ];
+
+        updateStatus(true);
+        render(S.products);
+        go('products');
+        toast('Demo cargado: 10 productos', 'ok');
+    }
+
+    // ════════════════════════════════════════════
+    // UTILS
+    // ════════════════════════════════════════════
+    function fmtN(s) {
+        return parseFloat(s || '0').toLocaleString('es-MX', { maximumFractionDigits: 0 });
+    }
+
+    function esc(s) {
+        const d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    function escA(s) {
+        return (s || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function toast(msg, type = 'inf') {
+        const c = document.getElementById('toasts');
+        const t = document.createElement('div');
+        const icons = { ok: '✓', err: '✗', inf: 'ℹ' };
+        t.className = `toast ${type}`;
+        t.innerHTML = `<span>${icons[type] || 'ℹ'}</span> ${msg}`;
+        c.appendChild(t);
+        setTimeout(() => {
+            t.style.opacity = '0';
+            t.style.transform = 'translateX(60px)';
+            t.style.transition = '0.25s ease';
+            setTimeout(() => t.remove(), 250);
+        }, 4000);
+    }
+
+    // ════════════════════════════════════════════
+    // BOOT
+    // ════════════════════════════════════════════
+    init();
+    </script>
+</body>
+</html>
