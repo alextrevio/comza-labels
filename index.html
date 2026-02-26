@@ -30,7 +30,7 @@
         /* SIDEBAR */
         .sb{background:var(--bg1);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
         .sb-brand{padding:24px 20px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
-        .sb-logo{height:28px;filter:invert(1) brightness(2)}
+        .sb-logo{height:30px;filter:invert(1) brightness(1.8)}
         .sb-name{font-weight:700;font-size:15px;letter-spacing:.5px}
         .sb-sub{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-top:2px}
         .sb-nav{flex:1;padding:16px 10px;display:flex;flex-direction:column;gap:2px}
@@ -136,9 +136,8 @@
         .lbl-pr-rw .lbl-cl .a{font-size:18px;font-weight:800}
         .lbl-pr-rw .lbl-cl .s{font-size:12px;font-weight:800}
         .lbl-sp{text-align:center;font-size:14px;color:#555;padding-top:18px;margin-top:16px;border-top:1px solid #ddd;letter-spacing:.5px}
-        .lbl-br{text-align:center;margin-top:18px;display:flex;align-items:center;justify-content:center;gap:6px}
-        .lbl-br img{height:22px}
-        .lbl-br span{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:800;letter-spacing:3px;color:#333}
+        .lbl-br{text-align:center;margin-top:20px;padding-top:4px}
+        .lbl-br img{height:32px;display:block;margin:0 auto}
         .lbl-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 
         /* PROMO */
@@ -174,7 +173,7 @@
 <div class="shell">
     <aside class="sb">
         <div class="sb-brand">
-            <img src="https://grupocomza.com/cdn/shop/files/GrupoComza_Logo2024_BLACK.png?v=1731972440&width=600" alt="COMZA" class="sb-logo">
+            <img src="/comza-logo.svg" alt="Grupo COMZA" class="sb-logo">
             <div><div class="sb-name">Grupo Comza</div><div class="sb-sub">Gestor de Etiquetas</div></div>
         </div>
         <nav class="sb-nav">
@@ -200,7 +199,7 @@
         <!-- CONNECT -->
         <div class="v on" id="v-connect">
             <div class="cx">
-                <img src="https://grupocomza.com/cdn/shop/files/GrupoComza_Logo2024_BLACK.png?v=1731972440&width=600" alt="COMZA" style="height:32px;filter:invert(1);margin-bottom:16px">
+                <img src="/comza-logo.svg" alt="COMZA" style="height:36px;filter:invert(1);margin-bottom:16px">
                 <h2>Configura tu conexión</h2>
                 <p>El servidor necesita las credenciales de Shopify en el archivo <code style="background:var(--bg4);padding:2px 6px;border-radius:3px;font-size:11px">.env</code>.</p>
                 <div class="cx-code">SHOPIFY_STORE_DOMAIN=tu-tienda<br>SHOPIFY_CLIENT_ID=...<br>SHOPIFY_CLIENT_SECRET=...<br>COMPANY_NAME=COMZA</div>
@@ -266,7 +265,7 @@
                             </div>
                         </div>
                         <div class="lbl-sp" id="L-sp">Luz 220 v / 1 ph / 20 Charolas / Gas</div>
-                        <div class="lbl-br"><img src="https://grupocomza.com/cdn/shop/files/GrupoComza_Logo2024_BLACK.png?v=1731972440&width=200" alt="COMZA"><span id="L-br">COMZA</span></div>
+                        <div class="lbl-br"><img src="/comza-logo.svg" alt="Grupo COMZA" id="L-br-img"><span id="L-br" style="display:none">COMZA</span></div>
                     </div>
                     <div class="lbl-act">
                         <button class="btn btn-g" onclick="printL()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir</button>
