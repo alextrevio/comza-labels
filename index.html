@@ -122,17 +122,23 @@
         .lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:24px;display:flex;flex-direction:column;align-items:center;gap:18px;position:sticky;top:32px}
         .lp-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t4)}
 
-        /* LABEL PAPER */
-        .lbl{background:#fff;color:#111;width:360px;padding:24px 20px;border-radius:2px;box-shadow:0 10px 30px rgba(0,0,0,.4);font-family:var(--font)}
-        .lbl-nm{font-size:13px;font-weight:500;text-align:center;color:#444;line-height:1.5;margin-bottom:12px}
-        .lbl-sku{text-align:center;font-family:var(--mono);margin-bottom:12px}
-        .lbl-sku .p{font-size:13px;color:#888;font-weight:400}.lbl-sku .v{font-size:28px;font-weight:700;letter-spacing:1px}
-        .lbl-rw{display:grid;grid-template-columns:1fr 1fr;margin-bottom:4px}
-        .lbl-cl{text-align:center;padding:7px 4px}
-        .lbl-cl .a{font-size:14px;font-weight:700;margin-bottom:1px}.lbl-cl .s{font-size:8.5px;font-weight:600;color:#777;text-transform:uppercase;letter-spacing:.5px}
-        .lbl-pb{text-align:center;font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:3px;padding:10px 0 6px;margin-top:6px;border-top:1.5px solid #ddd}
-        .lbl-sp{text-align:center;font-size:10px;color:#777;padding-top:12px;margin-top:10px;border-top:1px solid #eee}
-        .lbl-br{text-align:center;margin-top:12px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:4px;color:#444}
+        /* LABEL PAPER — matches physical label exactly */
+        .lbl{background:#fff;color:#111;width:380px;padding:30px 26px;border-radius:2px;box-shadow:0 10px 30px rgba(0,0,0,.4);font-family:'Assistant',Arial,sans-serif}
+        .lbl-nm{font-size:15px;font-weight:400;text-align:left;color:#555;line-height:1.4;margin-bottom:16px;font-style:italic}
+        .lbl-sku{text-align:left;margin-bottom:18px}
+        .lbl-sku .p{font-size:16px;color:#000;font-weight:700;font-family:'IBM Plex Mono',monospace}.lbl-sku .v{font-size:42px;font-weight:800;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;color:#000}
+        .lbl-rw{display:grid;grid-template-columns:1fr 1fr;margin-bottom:0}
+        .lbl-cl{text-align:left;padding:8px 0}
+        .lbl-cl .a{font-size:16px;font-weight:800;margin-bottom:2px;color:#000}.lbl-cl .s{font-size:11px;font-weight:800;color:#555;text-transform:uppercase;letter-spacing:.3px}
+        .lbl-cl:nth-child(2){text-align:right}
+        .lbl-cl:nth-child(2) .a{color:#666}
+        .lbl-pb{text-align:center;font-size:22px;font-weight:900;text-transform:uppercase;letter-spacing:4px;padding:16px 0 10px;margin-top:10px;border-top:2px solid #ccc;color:#000}
+        .lbl-pr-rw .lbl-cl .a{font-size:18px;font-weight:800}
+        .lbl-pr-rw .lbl-cl .s{font-size:12px;font-weight:800}
+        .lbl-sp{text-align:center;font-size:14px;color:#555;padding-top:18px;margin-top:16px;border-top:1px solid #ddd;letter-spacing:.5px}
+        .lbl-br{text-align:center;margin-top:18px;display:flex;align-items:center;justify-content:center;gap:6px}
+        .lbl-br img{height:22px}
+        .lbl-br span{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:800;letter-spacing:3px;color:#333}
         .lbl-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 
         /* PROMO */
@@ -248,10 +254,19 @@
                     <div class="lbl" id="lblP">
                         <div class="lbl-nm" id="L-nm">Horno Combi Rational SCC WE 202G (Reacondicionado)</div>
                         <div class="lbl-sku"><span class="p">SKU: </span><span class="v" id="L-sk">E258</span></div>
-                        <div class="lbl-rw"><div class="lbl-cl"><div class="a" id="L-pi">$518,400 MXN</div><div class="s">IVA Incluido</div></div><div class="lbl-cl"><div class="a" id="L-pc">$480,000 MXN</div><div class="s">Pago en Efectivo</div></div></div>
-                        <div id="L-prW"><div class="lbl-pb">Promoción</div><div class="lbl-rw"><div class="lbl-cl"><div class="a" id="L-pri">$473,000 MXN</div><div class="s">IVA Incluido</div></div><div class="lbl-cl"><div class="a" id="L-prc">$430,000 MXN</div><div class="s">Pago en Efectivo</div></div></div></div>
-                        <div class="lbl-sp" id="L-sp">Luz 220v / 1 ph / 20 Charolas / Gas</div>
-                        <div class="lbl-br" id="L-br">COMZA</div>
+                        <div class="lbl-rw">
+                            <div class="lbl-cl"><div class="a" id="L-pi">$518,400 MXN</div><div class="s">IVA Incluido</div></div>
+                            <div class="lbl-cl"><div class="a" id="L-pc">$480,000 MXN</div><div class="s">Pago en Efectivo</div></div>
+                        </div>
+                        <div id="L-prW">
+                            <div class="lbl-pb">Promoción</div>
+                            <div class="lbl-rw lbl-pr-rw">
+                                <div class="lbl-cl"><div class="a" id="L-pri">$473,000 MXN</div><div class="s">IVA Incluido</div></div>
+                                <div class="lbl-cl"><div class="a" id="L-prc">$430,000 MXN</div><div class="s">Pago en<br>Efectivo</div></div>
+                            </div>
+                        </div>
+                        <div class="lbl-sp" id="L-sp">Luz 220 v / 1 ph / 20 Charolas / Gas</div>
+                        <div class="lbl-br"><img src="https://grupocomza.com/cdn/shop/files/GrupoComza_Logo2024_BLACK.png?v=1731972440&width=200" alt="COMZA"><span id="L-br">COMZA</span></div>
                     </div>
                     <div class="lbl-act">
                         <button class="btn btn-g" onclick="printL()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir</button>
