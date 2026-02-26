@@ -1,22 +1,22 @@
-const { DOMAIN, TOKEN, shopUrl, headers, cors, normalizeProduct, fetch } = require('./_lib/shopify');
+const { shopUrl, shopifyHeaders, cors, normalizeProduct, fetch, isConfigured } = require('./_lib/shopify');
 
 module.exports = async (req, res) => {
   cors(res);
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  if (!DOMAIN || !TOKEN) {
+  if (!isConfigured()) {
     return res.status(400).json({ error: 'Shopify no configurado. Agrega las variables de entorno en Vercel.' });
   }
 
-  // ── GET: List all products with pagination ──
   if (req.method === 'GET') {
     try {
+      const hdrs = await shopifyHeaders();
       let all = [];
       let url = shopUrl('products.json?limit=250&status=active');
 
       while (url) {
-        const r = await fetch(url, { headers: headers() });
+        const r = await fetch(url, { headers: hdrs });
 
         if (!r.ok) {
           const err = await r.text();
@@ -26,7 +26,6 @@ module.exports = async (req, res) => {
         const data = await r.json();
         all = all.concat(data.products || []);
 
-        // Pagination via Link header
         url = null;
         const link = r.headers.get('link');
         if (link) {
