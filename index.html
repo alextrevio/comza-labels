@@ -189,6 +189,8 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
         <div class="sb-sec">Refacciones</div>
         <div class="sb-link" data-v="refacciones" onclick="go('refacciones')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Inventario<span class="sb-badge" id="nR">0</span></div>
         <div class="sb-link" data-v="ref-label" onclick="go('ref-label')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M7 12h.01M12 7h.01"/></svg>Etiqueta Refacción</div>
+        <div class="sb-sec">Herramientas</div>
+        <div class="sb-link" data-v="herramientas" onclick="go('herramientas')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Inventario<span class="sb-badge" id="nH">0</span></div>
         <div class="sb-sec">Sistema</div>
         <div class="sb-link" data-v="settings" onclick="go('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Configuración</div>
     </nav>
@@ -207,7 +209,7 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 <!-- PRODUCTS -->
 <div class="v" id="v-products">
 <div class="hd"><div><h1>Productos</h1><div class="sub">Sincronizado con Shopify</div></div>
-<div class="hd-act"><button class="btn btn-o btn-sm" onclick="fetchProducts()">↻ Actualizar</button></div></div>
+<div class="hd-act"><button class="btn btn-g" onclick="opNewProd()">+ Nuevo Producto</button><button class="btn btn-o btn-sm" onclick="fetchProducts()">↻ Actualizar</button></div></div>
 <div class="stats"><div class="st"><div class="st-l">Total</div><div class="st-v" id="sT">0</div></div><div class="st"><div class="st-l">Con SKU</div><div class="st-v" id="sS">0</div></div><div class="st"><div class="st-l">Sin SKU</div><div class="st-v" id="sN">0</div></div><div class="st"><div class="st-l">Inventario</div><div class="st-v" id="sI">0</div></div></div>
 <div class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="q" placeholder="Buscar por nombre, SKU, tipo o marca..." oninput="filterP()"></div>
 <div class="pg" id="grid"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
@@ -279,14 +281,24 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
     <button class="btn btn-g btn-sm" onclick="printRL()">🖨️ Imprimir</button>
     <button class="btn btn-o btn-sm" onclick="dlPNG('lblR','ref-etiqueta')">📥 PNG</button></div></div></div></div>
 
+<!-- HERRAMIENTAS -->
+<div class="v" id="v-herramientas">
+<div class="hd"><div><h1>Inventario de Herramientas</h1><div class="sub">Alta, baja y préstamo de herramientas</div></div>
+<div class="hd-act"><button class="btn btn-g" onclick="opHerrNew()">+ Nueva Herramienta</button></div></div>
+<div class="stats"><div class="st"><div class="st-l">Total</div><div class="st-v" id="hT">0</div></div><div class="st"><div class="st-l">Disponible</div><div class="st-v" id="hD">0</div></div><div class="st"><div class="st-l">En Préstamo</div><div class="st-v" id="hP">0</div></div><div class="st"><div class="st-l">Baja</div><div class="st-v" id="hB">0</div></div></div>
+<div class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="hQ" placeholder="Buscar herramientas..." oninput="filterHerr()"></div>
+<div class="rtbl-wrap"><table class="rtbl"><thead><tr><th>Nombre</th><th>Marca</th><th>Modelo</th><th>N° Serie</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="hGrid"></tbody></table></div></div>
+
 <!-- SETTINGS -->
 <div class="v" id="v-settings">
 <div class="hd"><div><h1>Configuración</h1><div class="sub">Conexión y preferencias</div></div></div>
 <div class="sc"><h3>Conexión Shopify</h3><div class="desc">Estado de la tienda</div>
 <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0"><div><div style="font-size:11px;font-weight:600">Tienda</div><div style="font-size:10px;color:var(--t3)" id="cfS">—</div></div><span class="tag tag-r" id="cfT">Desconectada</span></div>
 <div style="margin-top:10px"><button class="btn btn-o btn-sm" onclick="checkConnection()">Verificar</button></div></div>
-<div class="sc"><h3>Datos de Refacciones</h3><div class="desc">Exportar o importar inventario de refacciones (almacenado localmente)</div>
-<div style="display:flex;gap:6px"><button class="btn btn-o btn-sm" onclick="exportRef()">📤 Exportar JSON</button><button class="btn btn-o btn-sm" onclick="document.getElementById('impRef').click()">📥 Importar JSON</button><input type="file" id="impRef" accept=".json" style="display:none" onchange="importRef(event)"></div></div></div>
+<div class="sc"><h3>Datos de Refacciones</h3><div class="desc">Exportar o importar inventario de refacciones</div>
+<div style="display:flex;gap:6px"><button class="btn btn-o btn-sm" onclick="exportRef()">📤 Exportar JSON</button><button class="btn btn-o btn-sm" onclick="document.getElementById('impRef').click()">📥 Importar JSON</button><input type="file" id="impRef" accept=".json" style="display:none" onchange="importRef(event)"></div></div>
+<div class="sc"><h3>Datos de Herramientas</h3><div class="desc">Exportar o importar inventario de herramientas</div>
+<div style="display:flex;gap:6px"><button class="btn btn-o btn-sm" onclick="exportHerr()">📤 Exportar JSON</button><button class="btn btn-o btn-sm" onclick="document.getElementById('impHerr').click()">📥 Importar JSON</button><input type="file" id="impHerr" accept=".json" style="display:none" onchange="importHerr(event)"></div></div></div>
 
 </main></div>
 
@@ -305,19 +317,29 @@ async function init(){
     await initDB();
     await checkConnection();
     await loadRefStats();
+    await loadHerrStats();
 }
 
-// ─── IndexedDB for Refacciones ──────────────────────
+// ─── IndexedDB for Refacciones & Herramientas ───────
 function initDB(){return new Promise((ok,fail)=>{
-    const req=indexedDB.open('COMZA_Refacciones',1);
-    req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains('refs')){const s=db.createObjectStore('refs',{keyPath:'id',autoIncrement:true});s.createIndex('nombre','nombre');s.createIndex('estado','estado')}};
+    const req=indexedDB.open('COMZA_Inventarios',2);
+    req.onupgradeneeded=e=>{const db=e.target.result;
+        if(!db.objectStoreNames.contains('refs')){const s=db.createObjectStore('refs',{keyPath:'id',autoIncrement:true});s.createIndex('nombre','nombre');s.createIndex('estado','estado')}
+        if(!db.objectStoreNames.contains('herr')){const s=db.createObjectStore('herr',{keyPath:'id',autoIncrement:true});s.createIndex('nombre','nombre');s.createIndex('estado','estado')}};
     req.onsuccess=e=>{refDB=e.target.result;ok()};req.onerror=e=>fail(e)})}
 
+// Refacciones DB
 function dbTx(mode='readonly'){return refDB.transaction('refs',mode).objectStore('refs')}
 function dbGetAll(){return new Promise(ok=>{dbTx().getAll().onsuccess=e=>ok(e.target.result)})}
 function dbAdd(r){return new Promise(ok=>{dbTx('readwrite').add(r).onsuccess=e=>ok(e.target.result)})}
 function dbPut(r){return new Promise(ok=>{dbTx('readwrite').put(r).onsuccess=e=>ok(e.target.result)})}
 function dbDel(id){return new Promise(ok=>{dbTx('readwrite').delete(id).onsuccess=e=>ok()})}
+// Herramientas DB
+function hTx(mode='readonly'){return refDB.transaction('herr',mode).objectStore('herr')}
+function hGetAll(){return new Promise(ok=>{hTx().getAll().onsuccess=e=>ok(e.target.result)})}
+function hAdd(r){return new Promise(ok=>{hTx('readwrite').add(r).onsuccess=e=>ok(e.target.result)})}
+function hPut(r){return new Promise(ok=>{hTx('readwrite').put(r).onsuccess=e=>ok(e.target.result)})}
+function hDel(id){return new Promise(ok=>{hTx('readwrite').delete(id).onsuccess=e=>ok()})}
 
 // ─── CONNECTION ─────────────────────────────────────
 async function checkConnection(){
@@ -332,11 +354,11 @@ function updSt(on){
     const t=document.getElementById('cfT');t.className=on?'tag tag-g':'tag tag-r';t.textContent=on?'Conectada':'Desconectada'}
 
 function go(v){
-    if(!S.connected&&!S.demo&&v!=='connect'&&v!=='settings'&&v!=='refacciones'&&v!=='ref-label'){return}
+    if(!S.connected&&!S.demo&&v!=='connect'&&v!=='settings'&&v!=='refacciones'&&v!=='ref-label'&&v!=='herramientas'){return}
     document.querySelectorAll('.v').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.sb-link').forEach(x=>x.classList.remove('on'));
     const el=document.getElementById('v-'+v);if(el)el.classList.add('on');
     document.querySelector(`.sb-link[data-v="${v}"]`)?.classList.add('on');
-    if(v==='label')popSel();if(v==='refacciones')renderRefs();if(v==='ref-label')popRefSel()}
+    if(v==='label')popSel();if(v==='refacciones')renderRefs();if(v==='ref-label')popRefSel();if(v==='herramientas')renderHerr()}
 
 // ─── PRODUCTS ───────────────────────────────────────
 async function fetchProducts(){
@@ -383,12 +405,13 @@ function opEd(id){const p=S.products.find(x=>x.id===id);if(!p)return;
 
 async function savP(id,vid){
     const u={title:document.getElementById('eT').value,sku:document.getElementById('eS').value,product_type:document.getElementById('eY').value,price:document.getElementById('eP').value,compare_at_price:document.getElementById('eC').value||null,vendor:document.getElementById('eV').value,tags:document.getElementById('eG').value};
-    // Save internal meta fields locally
-    const meta={fecha_compra:document.getElementById('mFc').value,lugar_compra:document.getElementById('mLc').value,pedimento:document.getElementById('mPd').value,costo_adquisicion:document.getElementById('mCa').value,gasto_reparacion:document.getElementById('mGr').value,energia:document.getElementById('mEn').value,gas:document.getElementById('mGs').value,capacidad:document.getElementById('mCp').value};
-    localStorage.setItem('comza_meta_'+id,JSON.stringify(meta));
+    // Collect metafields for Shopify
+    const metafields={fecha_compra:document.getElementById('mFc').value,lugar_compra:document.getElementById('mLc').value,pedimento:document.getElementById('mPd').value,costo_adquisicion:document.getElementById('mCa').value,gasto_reparacion:document.getElementById('mGr').value,energia:document.getElementById('mEn').value,gas:document.getElementById('mGs').value,capacidad:document.getElementById('mCp').value};
+    // Also keep local cache for fast label loading
+    localStorage.setItem('comza_meta_'+id,JSON.stringify(metafields));
     const i=S.products.findIndex(p=>p.id===id);if(i>=0)S.products[i]={...S.products[i],...u};
-    if(!S.demo){try{const r=await fetch(API+`/api/products/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...u,variants:[{id:vid,sku:u.sku,price:u.price,compare_at_price:u.compare_at_price}]})});const d=await r.json();
-        if(d.error)toast('Error: '+JSON.stringify(d.error),'err');else{if(i>=0&&d.product)S.products[i]=d.product;toast('Guardado ✓','ok')}}catch(e){toast('Error de red','err')}}
+    if(!S.demo){try{const r=await fetch(API+`/api/products/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...u,variants:[{id:vid,sku:u.sku,price:u.price,compare_at_price:u.compare_at_price}],metafields})});const d=await r.json();
+        if(d.error)toast('Error: '+JSON.stringify(d.error),'err');else{if(i>=0&&d.product)S.products[i]=d.product;toast('Guardado en Shopify ✓','ok')}}catch(e){toast('Error de red','err')}}
     else toast('Guardado (demo)','ok');renderP(S.products);clPn()}
 
 // ─── PRODUCT LABEL ──────────────────────────────────
@@ -556,6 +579,117 @@ function parseNum(s){return parseInt((s||'0').replace(/[^0-9]/g,''))||0}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function escA(s){return(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function toast(m,t='inf'){const c=document.getElementById('tC'),e=document.createElement('div');e.className=`tst ${t}`;e.innerHTML=`<span>${{ok:'✓',err:'✗',inf:'ℹ'}[t]||'ℹ'}</span> ${m}`;c.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='.2s';setTimeout(()=>e.remove(),200)},3000)}
+
+// ─── NEW PRODUCT ────────────────────────────────────
+function opNewProd(){
+    document.getElementById('panTitle').textContent='Nuevo Producto en Shopify';
+    document.getElementById('panB').innerHTML=`
+        <div class="fg"><label>Nombre del Producto</label><input type="text" id="npT" placeholder="Horno Combi Rational SCC WE 202G"></div>
+        <div class="fg-row"><div class="fg"><label>SKU</label><input type="text" id="npS" style="font-family:var(--mono);font-weight:600" placeholder="E258"></div><div class="fg"><label>Tipo</label><input type="text" id="npY" placeholder="Hornos"></div></div>
+        <div class="fg-row"><div class="fg"><label>Precio Publicado (IVA)</label><input type="text" id="npP" placeholder="518400"></div><div class="fg"><label>Precio Promo</label><input type="text" id="npC" placeholder="(Opcional)"></div></div>
+        <div class="fg"><label>Marca / Vendor</label><input type="text" id="npV" placeholder="Rational"></div>
+        <div class="fg"><label>Tags</label><input type="text" id="npG" placeholder="reacondicionado, horno"></div>
+        <div style="margin-top:8px;padding:12px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border2)">
+            <div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">📋 Datos Internos COMZA</div>
+            <div class="fg-row"><div class="fg"><label>Fecha de Compra</label><input type="date" id="npFc"></div><div class="fg"><label>Lugar de Compra</label><input type="text" id="npLc"></div></div>
+            <div class="fg"><label>Número de Pedimento</label><input type="text" id="npPd" style="font-family:var(--mono)"></div>
+            <div class="fg-row"><div class="fg"><label>Costo de Adquisición</label><input type="text" id="npCa" placeholder="$0"></div><div class="fg"><label>Gasto de Reparación</label><input type="text" id="npGr" placeholder="$0"></div></div>
+            <div class="fg-row3"><div class="fg"><label>Energía</label><input type="text" id="npEn" placeholder="220v / 1 ph"></div><div class="fg"><label>Gas</label><input type="text" id="npGs" placeholder="LP / Natural"></div><div class="fg"><label>Capacidad</label><input type="text" id="npCp" placeholder="20 Charolas"></div></div>
+        </div>
+        <div class="pn-act"><button class="btn btn-o" onclick="clPn()">Cancelar</button><button class="btn btn-g" onclick="createProd()">Crear en Shopify</button></div>`;
+    opPn()}
+
+async function createProd(){
+    const d={title:document.getElementById('npT').value,sku:document.getElementById('npS').value,product_type:document.getElementById('npY').value,price:document.getElementById('npP').value||'0',compare_at_price:document.getElementById('npC').value||null,vendor:document.getElementById('npV').value,tags:document.getElementById('npG').value,
+        metafields:{fecha_compra:document.getElementById('npFc').value,lugar_compra:document.getElementById('npLc').value,pedimento:document.getElementById('npPd').value,costo_adquisicion:document.getElementById('npCa').value,gasto_reparacion:document.getElementById('npGr').value,energia:document.getElementById('npEn').value,gas:document.getElementById('npGs').value,capacidad:document.getElementById('npCp').value}};
+    if(!d.title){toast('Nombre requerido','err');return}
+    if(S.demo){const fake={id:Date.now(),title:d.title,sku:d.sku,price:d.price,compare_at_price:d.compare_at_price,vendor:d.vendor,product_type:d.product_type,tags:d.tags,inventory_quantity:0,image:null,variant_id:Date.now()+1,status:'active',body_html:''};S.products.push(fake);renderP(S.products);clPn();toast('Producto creado (demo)','ok');return}
+    try{const r=await fetch(API+'/api/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});const res=await r.json();
+        if(res.error){toast('Error: '+JSON.stringify(res.error),'err');return}
+        if(res.product){S.products.push(res.product);localStorage.setItem('comza_meta_'+res.product.id,JSON.stringify(d.metafields));renderP(S.products)}
+        toast('Producto creado en Shopify ✓','ok');clPn()}catch(e){toast('Error de red','err')}}
+
+// ─── HERRAMIENTAS ───────────────────────────────────
+const H_ESTADOS=['Disponible','En Préstamo','En Reparación','Baja'];
+
+async function renderHerr(){
+    const all=await hGetAll();
+    document.getElementById('nH').textContent=all.length;document.getElementById('hT').textContent=all.length;
+    document.getElementById('hD').textContent=all.filter(h=>h.estado==='Disponible').length;
+    document.getElementById('hP').textContent=all.filter(h=>h.estado==='En Préstamo').length;
+    document.getElementById('hB').textContent=all.filter(h=>h.estado==='Baja').length;
+    renderHerrTable(all)}
+
+async function filterHerr(){const q=document.getElementById('hQ').value.toLowerCase().trim();const all=await hGetAll();
+    if(!q)return renderHerrTable(all);
+    renderHerrTable(all.filter(h=>(h.nombre||'').toLowerCase().includes(q)||(h.marca||'').toLowerCase().includes(q)||(h.modelo||'').toLowerCase().includes(q)||(h.serie||'').toLowerCase().includes(q)||(h.estado||'').toLowerCase().includes(q)||(h.ubicacion||'').toLowerCase().includes(q)))}
+
+function hEstadoTag(e){const m={'Disponible':'tag-g','En Préstamo':'tag-b','En Reparación':'tag-a','Baja':'tag-r'};return`<span class="tag ${m[e]||''}">${e}</span>`}
+
+function renderHerrTable(herrs){const g=document.getElementById('hGrid');
+    if(!herrs.length){g.innerHTML='<tr><td colspan="6"><div class="empty"><h3>Sin herramientas</h3><p>Agrega tu primera herramienta</p></div></td></tr>';return}
+    g.innerHTML=herrs.map(h=>`<tr>
+        <td style="font-weight:600">${esc(h.nombre||'')}</td><td>${esc(h.marca||'')}</td><td>${esc(h.modelo||'')}</td>
+        <td style="font-family:var(--mono);font-size:10px">${esc(h.serie||'—')}</td>
+        <td>${hEstadoTag(h.estado||'Disponible')}</td>
+        <td><div style="display:flex;gap:4px">
+            <button class="btn btn-o btn-sm" onclick="opHerrEdit(${h.id})">✏️</button>
+            <button class="btn btn-b btn-sm" onclick="opHerrPrest(${h.id})">📤</button>
+            <button class="btn btn-r btn-sm" onclick="opHerrBaja(${h.id})">⛔</button>
+        </div></td></tr>`).join('')}
+
+async function loadHerrStats(){const all=await hGetAll();document.getElementById('nH').textContent=all.length}
+
+function opHerrNew(){
+    document.getElementById('panTitle').textContent='Nueva Herramienta';
+    document.getElementById('panB').innerHTML=herrForm({});opPn()}
+
+function herrForm(h){return`
+    <div class="fg"><label>Nombre de la Herramienta</label><input type="text" id="hfNm" value="${escA(h.nombre||'')}"></div>
+    <div class="fg-row"><div class="fg"><label>Marca</label><input type="text" id="hfMa" value="${escA(h.marca||'')}"></div><div class="fg"><label>Modelo</label><input type="text" id="hfMo" value="${escA(h.modelo||'')}"></div></div>
+    <div class="fg-row"><div class="fg"><label>Número de Serie</label><input type="text" id="hfSe" value="${escA(h.serie||'')}" style="font-family:var(--mono)"></div><div class="fg"><label>Ubicación</label><input type="text" id="hfUb" value="${escA(h.ubicacion||'')}"></div></div>
+    <div class="fg"><label>Descripción</label><textarea id="hfDe">${escA(h.descripcion||'')}</textarea></div>
+    <div class="fg"><label>Estado</label><select id="hfEs">${H_ESTADOS.map(e=>`<option${e===h.estado?' selected':''}>${e}</option>`).join('')}</select></div>
+    <div class="pn-act"><button class="btn btn-o" onclick="clPn()">Cancelar</button><button class="btn btn-g" onclick="saveHerr(${h.id||0})">Guardar</button></div>`}
+
+async function saveHerr(id){
+    const d={nombre:document.getElementById('hfNm').value,marca:document.getElementById('hfMa').value,modelo:document.getElementById('hfMo').value,serie:document.getElementById('hfSe').value,ubicacion:document.getElementById('hfUb').value,descripcion:document.getElementById('hfDe').value,estado:document.getElementById('hfEs').value};
+    if(!d.nombre){toast('Nombre requerido','err');return}
+    if(id){d.id=id;await hPut(d);toast('Herramienta actualizada ✓','ok')}else{await hAdd(d);toast('Herramienta agregada ✓','ok')}
+    clPn();renderHerr()}
+
+async function opHerrEdit(id){const all=await hGetAll();const h=all.find(x=>x.id===id);if(!h)return;
+    document.getElementById('panTitle').textContent='Editar Herramienta';document.getElementById('panB').innerHTML=herrForm(h);opPn()}
+
+async function opHerrPrest(id){const all=await hGetAll();const h=all.find(x=>x.id===id);if(!h)return;
+    document.getElementById('panTitle').textContent='Préstamo de Herramienta';
+    document.getElementById('panB').innerHTML=`<div style="margin-bottom:12px;font-size:13px;font-weight:600">${esc(h.nombre)}</div>
+    <div class="fg"><label>Fecha de Préstamo</label><input type="date" id="hpFe" value="${new Date().toISOString().split('T')[0]}"></div>
+    <div class="fg"><label>Persona Responsable</label><input type="text" id="hpPe" placeholder="Nombre del responsable"></div>
+    <div class="fg"><label>Descripción</label><textarea id="hpDe" placeholder="Motivo del préstamo..."></textarea></div>
+    <div class="pn-act"><button class="btn btn-o" onclick="clPn()">Cancelar</button><button class="btn btn-b" onclick="doHerrPrest(${id})">Confirmar Préstamo</button></div>`;opPn()}
+
+async function doHerrPrest(id){const all=await hGetAll();const h=all.find(x=>x.id===id);if(!h)return;
+    h.estado='En Préstamo';h.prestamo={fecha:document.getElementById('hpFe').value,persona:document.getElementById('hpPe').value,descripcion:document.getElementById('hpDe').value};
+    await hPut(h);toast('Préstamo registrado ✓','ok');clPn();renderHerr()}
+
+async function opHerrBaja(id){const all=await hGetAll();const h=all.find(x=>x.id===id);if(!h)return;
+    document.getElementById('panTitle').textContent='Baja de Herramienta';
+    document.getElementById('panB').innerHTML=`<div style="margin-bottom:12px;font-size:13px;font-weight:600;color:var(--red)">${esc(h.nombre)}</div>
+    <div class="fg"><label>Fecha de Baja</label><input type="date" id="hbFe" value="${new Date().toISOString().split('T')[0]}"></div>
+    <div class="fg"><label>Persona Responsable</label><input type="text" id="hbPe" placeholder="Nombre del responsable"></div>
+    <div class="fg"><label>Descripción / Motivo</label><textarea id="hbDe" placeholder="Motivo de la baja..."></textarea></div>
+    <div class="pn-act"><button class="btn btn-o" onclick="clPn()">Cancelar</button><button class="btn btn-r" onclick="doHerrBaja(${id})">Confirmar Baja</button></div>`;opPn()}
+
+async function doHerrBaja(id){const all=await hGetAll();const h=all.find(x=>x.id===id);if(!h)return;
+    h.estado='Baja';h.baja={fecha:document.getElementById('hbFe').value,persona:document.getElementById('hbPe').value,descripcion:document.getElementById('hbDe').value};
+    await hPut(h);toast('Baja registrada ✓','ok');clPn();renderHerr()}
+
+// ─── HERRAMIENTAS EXPORT/IMPORT ─────────────────────
+async function exportHerr(){const all=await hGetAll();const b=new Blob([JSON.stringify(all,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='comza-herramientas-'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Exportado ✓','ok')}
+
+async function importHerr(e){const f=e.target.files[0];if(!f)return;const t=await f.text();try{const arr=JSON.parse(t);
+    for(const h of arr){delete h.id;await hAdd(h)}toast(`${arr.length} herramientas importadas ✓`,'ok');renderHerr()}catch(er){toast('Error en archivo','err')}}
 
 init();
 </script>
