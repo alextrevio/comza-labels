@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v3.6 -->
+<!-- v3.7 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -113,7 +113,10 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 .lp-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t4)}
 
 .lbl{background:#fff;color:#111;width:384px;height:576px;padding:28px 26px;border-radius:0;box-shadow:0 8px 24px rgba(0,0,0,.35);font-family:'Assistant',Arial,sans-serif;display:flex;flex-direction:column;justify-content:space-between;transform-origin:top center}
-@media(max-width:500px){.lbl{transform:scale(0.82);margin-bottom:-100px}}
+@media(max-width:500px){
+    .lp-box{position:static!important;overflow:visible}
+    .lbl{transform:scale(0.78);margin-bottom:-130px}
+}
 .lbl-top{}
 .lbl-nm{font-size:14px;font-weight:400;text-align:left;color:#777;line-height:1.35;font-style:italic;margin-bottom:6px}
 .lbl-sku{text-align:left;margin-bottom:12px;line-height:1}
