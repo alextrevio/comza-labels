@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v4.2 -->
+<!-- v4.3 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -114,8 +114,9 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 .la{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
 .lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;position:sticky;top:28px;overflow:visible}
 .lp-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t4)}
-
-.label{background:#fff;width:384px;height:576px;padding:32px 30px 24px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.4);transform-origin:top center}
+/* Label wrapper for scaling */
+.label-wrap{width:100%;display:flex;justify-content:center}
+.label{background:#fff;width:384px;height:576px;padding:32px 30px 24px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.4);transform-origin:top left;flex-shrink:0}
 .label-name{font-size:15px;font-weight:400;font-style:italic;color:#888;line-height:1.3;margin-bottom:12px}
 .label-sku{font-size:48px;font-weight:800;color:#444;line-height:1;margin-bottom:20px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word}
 .price-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
@@ -131,9 +132,6 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 .label-spacer{flex:1}
 .label-specs{text-align:center;font-size:14px;font-weight:400;color:#666;letter-spacing:.3px;margin-bottom:16px}
 .label-brand{text-align:center}.label-brand img{height:28px}
-.lbl-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
-@media(max-width:500px){.lp-box{position:static!important}.label{transform:scale(0.78);margin-bottom:-130px}}
-
 .lbl-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 
 /* LABEL 3x1 - Refacciones */
@@ -243,6 +241,7 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
     </div>
 </div>
 <div class="lp-box"><div class="lp-tag">Vista previa 4×6"</div>
+<div class="label-wrap" id="lblWrap">
 <div class="label has-promo" id="lblP">
     <div class="label-name" id="L-nm">Horno Combi Rational SCC WE 202G (Reacondicionado)</div>
     <div class="label-sku" id="L-sku">SKU: E258</div>
@@ -260,6 +259,7 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
     <div class="label-spacer"></div>
     <div class="label-specs" id="L-sp">Luz 220 v / 1 ph / 20 Charolas / Gas</div>
     <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
+</div>
 </div>
 <div class="lbl-act">
     <button class="btn btn-g" onclick="printL()">🖨️ Imprimir</button>
@@ -352,6 +352,20 @@ function hAdd(r){return new Promise(ok=>{hTx('readwrite').add(r).onsuccess=e=>ok
 function hPut(r){return new Promise(ok=>{hTx('readwrite').put(r).onsuccess=e=>ok(e.target.result)})}
 function hDel(id){return new Promise(ok=>{hTx('readwrite').delete(id).onsuccess=e=>ok()})}
 
+// ─── LABEL SCALING ─────────────────────────────────
+function scaleLabel(){
+    const wrap=document.getElementById('lblWrap');if(!wrap)return;
+    const lbl=document.getElementById('lblP');if(!lbl)return;
+    const wrapW=wrap.parentElement.clientWidth-40;// padding
+    const lblW=384;const lblH=576;
+    const scale=Math.min(1,wrapW/lblW);
+    lbl.style.transform=`scale(${scale})`;
+    lbl.style.transformOrigin='top left';
+    wrap.style.width=Math.round(lblW*scale)+'px';
+    wrap.style.height=Math.round(lblH*scale)+'px';
+    wrap.style.overflow='hidden'}
+window.addEventListener('resize',scaleLabel);
+
 // ─── CONNECTION ─────────────────────────────────────
 async function checkConnection(){
     try{const r=await fetch(API+'/api/health');const d=await r.json();
@@ -369,7 +383,7 @@ function go(v){
     document.querySelectorAll('.v').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.sb-link').forEach(x=>x.classList.remove('on'));
     const el=document.getElementById('v-'+v);if(el)el.classList.add('on');
     document.querySelector(`.sb-link[data-v="${v}"]`)?.classList.add('on');
-    if(v==='label')popSel();if(v==='refacciones')renderRefs();if(v==='ref-label')popRefSel();if(v==='herramientas')renderHerr()}
+    if(v==='label'){popSel();setTimeout(scaleLabel,50)}if(v==='refacciones')renderRefs();if(v==='ref-label')popRefSel();if(v==='herramientas')renderHerr()}
 
 // ─── PRODUCTS ───────────────────────────────────────
 async function fetchProducts(){
