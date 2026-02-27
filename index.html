@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v4.5 -->
+<!-- v4.6 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -365,7 +365,8 @@ function scaleLabel(){
     const availW=wrap.parentElement.clientWidth-10;
     const z=Math.min(1,availW/384);
     lbl.style.zoom=z;
-    wrap.style.height=Math.ceil(576*z)+'px'}
+    wrap.style.height=Math.ceil(580*z)+'px';
+    wrap.style.overflow='visible'}
 window.addEventListener('resize',scaleLabel);
 
 // ─── CONNECTION ─────────────────────────────────────
