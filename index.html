@@ -106,27 +106,35 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 .pn-img img{width:100%;height:100%;object-fit:cover}
 .pn-act{display:flex;gap:6px;margin-top:16px}.pn-act .btn{flex:1}
 
-/* LABEL 4x6 - Product */
+/* LABEL 4x6 - Product - EXACT replica of physical label */
 .la{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
 .lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;position:sticky;top:28px}
 .lp-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t4)}
 
-.lbl{background:#fff;color:#111;width:384px;height:576px;padding:28px 24px;border-radius:2px;box-shadow:0 8px 24px rgba(0,0,0,.35);font-family:'Assistant',Arial,sans-serif;display:flex;flex-direction:column;justify-content:space-between}
-.lbl-nm{font-size:15px;font-weight:400;text-align:left;color:#555;line-height:1.4;font-style:italic}
-.lbl-sku{text-align:left;margin:12px 0 14px}
-.lbl-sku .p{font-size:16px;color:#000;font-weight:700;font-family:var(--mono)}.lbl-sku .v{font-size:42px;font-weight:800;font-family:var(--mono);color:#000;letter-spacing:1px}
-.lbl-rw{display:grid;grid-template-columns:1fr 1fr}
-.lbl-cl{padding:6px 0}.lbl-cl:first-child{text-align:left}.lbl-cl:last-child{text-align:right}
-.lbl-cl .a{font-size:16px;font-weight:800;color:#000;margin-bottom:1px}.lbl-cl .s{font-size:10px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.3px}
-.lbl-cl:last-child .a{color:#555}
-.lbl-sep{border:none;border-top:2px solid #ccc;margin:10px 0 8px}
-.lbl-promo-title{text-align:center;font-size:22px;font-weight:900;text-transform:uppercase;letter-spacing:4px;color:#000;margin-bottom:10px}
-.lbl-pr-rw .lbl-cl .a{font-size:20px;font-weight:900}.lbl-pr-rw .lbl-cl .s{font-size:12px;font-weight:800}
-/* When promo active: original prices shrink, no bold */
-.lbl.has-promo .lbl-rw:not(.lbl-pr-rw) .lbl-cl .a{font-size:13px;font-weight:400;color:#888}
-.lbl.has-promo .lbl-rw:not(.lbl-pr-rw) .lbl-cl .s{font-size:9px;font-weight:400;color:#999}
-.lbl-specs{text-align:center;font-size:13px;color:#555;letter-spacing:.3px;padding-top:14px;border-top:1px solid #ddd;margin-top:12px;line-height:1.6}
-.lbl-brand{text-align:center;margin-top:auto;padding-top:12px}.lbl-brand img{height:28px}
+.lbl{background:#fff;color:#111;width:384px;height:576px;padding:30px 28px;border-radius:0;box-shadow:0 8px 24px rgba(0,0,0,.35);font-family:'Assistant',Arial,sans-serif;display:flex;flex-direction:column}
+.lbl-nm{font-size:14.5px;font-weight:400;text-align:left;color:#666;line-height:1.35;font-style:italic;margin-bottom:10px}
+.lbl-sku{text-align:left;margin-bottom:16px}
+.lbl-sku .p{font-size:28px;color:#333;font-weight:800;font-family:'Assistant',Arial,sans-serif;letter-spacing:1px}
+.lbl-sku .v{font-size:46px;font-weight:900;font-family:'Assistant',Arial,sans-serif;color:#333;letter-spacing:2px}
+.lbl-prices{display:grid;grid-template-columns:1fr 1fr;margin-bottom:6px}
+.lbl-pcol{padding:4px 0}
+.lbl-pcol:first-child{text-align:left}
+.lbl-pcol:last-child{text-align:right}
+.lbl-pcol .amt{font-size:14px;font-weight:700;color:#555;margin-bottom:0;letter-spacing:.2px}
+.lbl-pcol .sub{font-size:9.5px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.2px;line-height:1.3}
+/* Promo section */
+.lbl-promo{margin-top:10px;padding-top:0}
+.lbl-promo-hd{text-align:center;font-size:21px;font-weight:900;text-transform:uppercase;letter-spacing:5px;color:#333;margin-bottom:12px;padding-top:14px}
+.lbl-promo .lbl-prices{margin-bottom:0}
+.lbl-promo .lbl-pcol .amt{font-size:17px;font-weight:900;color:#333}
+.lbl-promo .lbl-pcol .sub{font-size:10.5px;font-weight:800;color:#555;line-height:1.3}
+/* When promo: original prices get lighter */
+.lbl.has-promo .lbl-prices:first-of-type .lbl-pcol .amt{font-size:13px;font-weight:400;color:#888}
+.lbl.has-promo .lbl-prices:first-of-type .lbl-pcol .sub{font-size:8.5px;font-weight:400;color:#999}
+/* Specs */
+.lbl-specs{text-align:center;font-size:13px;color:#666;letter-spacing:.3px;margin-top:auto;padding-top:16px;line-height:1.5}
+/* Brand */
+.lbl-brand{text-align:center;padding-top:14px;margin-top:auto}.lbl-brand img{height:30px}
 
 .lbl-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 
@@ -223,32 +231,41 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
     <div class="fg"><label>Condición</label><input type="text" id="lCd" placeholder="Reacondicionado"></div>
     <div class="fg"><label>SKU</label><input type="text" id="lSk" placeholder="E258" style="font-family:var(--mono);font-size:14px;font-weight:700"></div>
     <div class="fg-row">
-        <div class="fg"><label>Precio Publicado (IVA incl.)</label><input type="text" id="lPI" placeholder="518,400" oninput="autoCalcCash()"></div>
-        <div class="fg"><label>Precio Efectivo (-10%)</label><input type="text" id="lPC" placeholder="466,560" style="color:var(--green)" readonly></div>
+        <div class="fg"><label>Precio IVA Incluido</label><input type="text" id="lPI" placeholder="518,400"></div>
+        <div class="fg"><label>Precio Pago en Efectivo</label><input type="text" id="lPC" placeholder="480,000"></div>
     </div>
     <div class="prb"><div class="prb-h"><span>🏷️ Promoción</span><label class="chk"><input type="checkbox" id="lHP" onchange="togPr()"> Activar</label></div>
     <div id="prF" style="display:none"><div class="fg-row">
-        <div class="fg" style="margin:0"><label>Promo IVA</label><input type="text" id="lPrI" placeholder="473,000" oninput="autoCalcPromoCash()"></div>
-        <div class="fg" style="margin:0"><label>Promo Efectivo (-10%)</label><input type="text" id="lPrC" placeholder="425,700" style="color:var(--green)" readonly></div>
+        <div class="fg" style="margin:0"><label>Promo IVA Incluido</label><input type="text" id="lPrI" placeholder="473,000"></div>
+        <div class="fg" style="margin:0"><label>Promo Pago en Efectivo</label><input type="text" id="lPrC" placeholder="430,000"></div>
     </div></div></div>
     <div style="margin-top:8px;padding:10px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border2)">
-        <div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Especificaciones</div>
-        <div class="fg-row3">
-            <div class="fg" style="margin:0"><label>Energía</label><input type="text" id="lSpE" placeholder="220v / 1 ph"></div>
-            <div class="fg" style="margin:0"><label>Gas</label><input type="text" id="lSpG" placeholder="LP / Natural"></div>
-            <div class="fg" style="margin:0"><label>Capacidad</label><input type="text" id="lSpC" placeholder="20 Charolas"></div>
-        </div>
+        <div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Especificaciones (para etiqueta)</div>
+        <div class="fg" style="margin:0"><label>Texto de especificaciones</label><input type="text" id="lSpTxt" placeholder="Luz 220 v / 1 ph / 20 Charolas / Gas"></div>
     </div>
     <button class="btn btn-g btn-w" style="margin-top:12px" onclick="updL()">Actualizar Vista Previa</button>
 </div>
 <div class="lp-box"><div class="lp-tag">Vista previa 4×6"</div>
 <div class="lbl" id="lblP">
-    <div><div class="lbl-nm" id="L-nm">Horno Combi Rational SCC WE 202G (Reacondicionado)</div>
-    <div class="lbl-sku"><span class="p">SKU: </span><span class="v" id="L-sk">E258</span></div>
-    <div class="lbl-rw"><div class="lbl-cl"><div class="a" id="L-pi">$518,400 MXN</div><div class="s">IVA Incluido</div></div><div class="lbl-cl"><div class="a" id="L-pc">$466,560 MXN</div><div class="s">Pago en Efectivo</div></div></div>
-    <div id="L-prW"><hr class="lbl-sep"><div class="lbl-promo-title">Promoción</div><div class="lbl-rw lbl-pr-rw"><div class="lbl-cl"><div class="a" id="L-pri">$473,000 MXN</div><div class="s">IVA Incluido</div></div><div class="lbl-cl"><div class="a" id="L-prc">$425,700 MXN</div><div class="s">Pago en<br>Efectivo</div></div></div></div>
-    <div class="lbl-specs" id="L-sp">Luz 220v / 1 ph / 20 Charolas / Gas LP</div></div>
-    <div class="lbl-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
+    <div>
+        <div class="lbl-nm" id="L-nm">Horno Combi Rational SCC WE 202G (Reacondicionado)</div>
+        <div class="lbl-sku"><span class="p">SKU: </span><span class="v" id="L-sk">E258</span></div>
+        <div class="lbl-prices" id="L-pricesMain">
+            <div class="lbl-pcol"><div class="amt" id="L-pi">$ 518,400 MXN</div><div class="sub">IVA INCLUIDO</div></div>
+            <div class="lbl-pcol"><div class="amt" id="L-pc">$480,000 MXN</div><div class="sub">PAGO EN EFECTIVO</div></div>
+        </div>
+        <div class="lbl-promo" id="L-prW">
+            <div class="lbl-promo-hd">PROMOCIÓN</div>
+            <div class="lbl-prices">
+                <div class="lbl-pcol"><div class="amt" id="L-pri">$ 473,000 MXN</div><div class="sub">IVA INCLUIDO</div></div>
+                <div class="lbl-pcol"><div class="amt" id="L-prc">$430,000 MXN</div><div class="sub">PAGO EN<br>EFECTIVO</div></div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="lbl-specs" id="L-sp">Luz 220 v / 1 ph / 20 Charolas / Gas</div>
+        <div class="lbl-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
+    </div>
 </div>
 <div class="lbl-act">
     <button class="btn btn-g" onclick="printL()">🖨️ Imprimir</button>
@@ -417,22 +434,26 @@ async function savP(id,vid){
 // ─── PRODUCT LABEL ──────────────────────────────────
 function popSel(){const s=document.getElementById('lSel');s.innerHTML='<option value="">— Seleccionar —</option>'+S.products.map(p=>`<option value="${p.id}">${p.sku?'['+p.sku+'] ':''}${p.title}</option>`).join('')}
 
-function autoCalcCash(){const v=parseNum(document.getElementById('lPI').value);document.getElementById('lPC').value=v?fN(Math.round(v*0.9).toString()):''}
-function autoCalcPromoCash(){const v=parseNum(document.getElementById('lPrI').value);document.getElementById('lPrC').value=v?fN(Math.round(v*0.9).toString()):''}
+function autoCalcCash(){}
+function autoCalcPromoCash(){}
 
 function fillL(){const id=parseInt(document.getElementById('lSel').value);if(!id)return;const p=S.products.find(x=>x.id===id);if(!p)return;
     document.getElementById('lNm').value=p.title;document.getElementById('lCd').value='';document.getElementById('lSk').value=p.sku;
-    document.getElementById('lPI').value=fN(p.price);autoCalcCash();
-    if(p.compare_at_price&&parseFloat(p.compare_at_price)>0){document.getElementById('lHP').checked=true;togPr();document.getElementById('lPrI').value=fN(p.compare_at_price);autoCalcPromoCash()}
+    document.getElementById('lPI').value=fN(p.price);
+    // Auto-fill cash price as price without IVA (price/1.16) rounded
+    const cashAuto=Math.round(parseFloat(p.price||0)/1.16);
+    document.getElementById('lPC').value=cashAuto?fN(cashAuto.toString()):'';
+    if(p.compare_at_price&&parseFloat(p.compare_at_price)>0){document.getElementById('lHP').checked=true;togPr();document.getElementById('lPrI').value=fN(p.compare_at_price);
+        const promoCash=Math.round(parseFloat(p.compare_at_price)/1.16);
+        document.getElementById('lPrC').value=promoCash?fN(promoCash.toString()):''}
     else{document.getElementById('lHP').checked=false;togPr()}
-    // Load specs from meta if available, otherwise try to parse from description
+    // Load specs from meta
     const meta=JSON.parse(localStorage.getItem('comza_meta_'+id)||'{}');
-    if(meta.energia||meta.gas||meta.capacidad){
-        document.getElementById('lSpE').value=meta.energia||'';document.getElementById('lSpG').value=meta.gas||'';document.getElementById('lSpC').value=meta.capacidad||'';
-    }else{
-        const desc=p.body_html?p.body_html.replace(/<[^>]*>/g,'').trim():'';
-        document.getElementById('lSpE').value='';document.getElementById('lSpG').value='';document.getElementById('lSpC').value='';
-        if(desc){const parts=desc.split('/').map(s=>s.trim());if(parts.length>=1)document.getElementById('lSpE').value=parts[0];if(parts.length>=2)document.getElementById('lSpG').value=parts[parts.length-1];if(parts.length>=3)document.getElementById('lSpC').value=parts.slice(1,-1).join(' / ')}}
+    const specParts=[];
+    if(meta.energia)specParts.push('Luz '+meta.energia);
+    if(meta.capacidad)specParts.push(meta.capacidad);
+    if(meta.gas)specParts.push('Gas'+(/^[A-Z]/.test(meta.gas)?' ':'')+(meta.gas));
+    document.getElementById('lSpTxt').value=specParts.join(' / ')||'';
     updL()}
 
 function goL(id){go('label');setTimeout(()=>{document.getElementById('lSel').value=id;fillL()},50)}
@@ -442,18 +463,13 @@ function updL(){
     const nm=document.getElementById('lNm').value,cd=document.getElementById('lCd').value;
     document.getElementById('L-nm').textContent=cd?`${nm} (${cd})`:nm;
     document.getElementById('L-sk').textContent=document.getElementById('lSk').value;
-    document.getElementById('L-pi').textContent=`$${document.getElementById('lPI').value} MXN`;
+    document.getElementById('L-pi').textContent=`$ ${document.getElementById('lPI').value} MXN`;
     document.getElementById('L-pc').textContent=`$${document.getElementById('lPC').value} MXN`;
     const pr=document.getElementById('lHP').checked;
     document.getElementById('L-prW').style.display=pr?'block':'none';
-    // Toggle class: when promo active, original prices shrink
     document.getElementById('lblP').classList.toggle('has-promo',pr);
-    if(pr){document.getElementById('L-pri').textContent=`$${document.getElementById('lPrI').value} MXN`;document.getElementById('L-prc').textContent=`$${document.getElementById('lPrC').value} MXN`}
-    const specs=[];
-    if(document.getElementById('lSpE').value)specs.push(document.getElementById('lSpE').value);
-    if(document.getElementById('lSpC').value)specs.push(document.getElementById('lSpC').value);
-    if(document.getElementById('lSpG').value)specs.push(document.getElementById('lSpG').value);
-    document.getElementById('L-sp').textContent=specs.join(' / ')||''}
+    if(pr){document.getElementById('L-pri').textContent=`$ ${document.getElementById('lPrI').value} MXN`;document.getElementById('L-prc').textContent=`$${document.getElementById('lPrC').value} MXN`}
+    document.getElementById('L-sp').textContent=document.getElementById('lSpTxt').value||''}
 
 function printL(){updL();window.print()}
 
