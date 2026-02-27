@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v4.3 -->
+<!-- v4.4 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -112,13 +112,12 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 
 /* LABEL 4x6 - PIXEL PERFECT replica of physical COMZA label */
 .la{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
-.lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;position:sticky;top:28px;overflow:visible}
+.lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px}
 .lp-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t4)}
-/* Label wrapper for scaling */
-.label-wrap{width:100%;display:flex;justify-content:center}
-.label{background:#fff;width:384px;height:576px;padding:32px 30px 24px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.4);transform-origin:top left;flex-shrink:0}
+.label-wrap{display:flex;justify-content:center}
+.label{background:#fff;width:384px;height:576px;padding:32px 30px 24px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.4);flex-shrink:0}
 .label-name{font-size:15px;font-weight:400;font-style:italic;color:#888;line-height:1.3;margin-bottom:12px}
-.label-sku{font-size:48px;font-weight:800;color:#444;line-height:1;margin-bottom:20px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word}
+.label-sku{font-size:48px;font-weight:800;color:#444;line-height:1.05;margin-bottom:20px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word}
 .price-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
 .price-col.right{text-align:right}
 .price-amount{font-size:15px;font-weight:700;color:#555;letter-spacing:.3px}
@@ -356,14 +355,10 @@ function hDel(id){return new Promise(ok=>{hTx('readwrite').delete(id).onsuccess=
 function scaleLabel(){
     const wrap=document.getElementById('lblWrap');if(!wrap)return;
     const lbl=document.getElementById('lblP');if(!lbl)return;
-    const wrapW=wrap.parentElement.clientWidth-40;// padding
-    const lblW=384;const lblH=576;
-    const scale=Math.min(1,wrapW/lblW);
-    lbl.style.transform=`scale(${scale})`;
-    lbl.style.transformOrigin='top left';
-    wrap.style.width=Math.round(lblW*scale)+'px';
-    wrap.style.height=Math.round(lblH*scale)+'px';
-    wrap.style.overflow='hidden'}
+    const availW=wrap.parentElement.clientWidth-10;
+    const z=Math.min(1,availW/384);
+    lbl.style.zoom=z;
+    wrap.style.height=Math.ceil(576*z)+'px'}
 window.addEventListener('resize',scaleLabel);
 
 // ─── CONNECTION ─────────────────────────────────────
@@ -474,21 +469,33 @@ function updL(){
     const skuText=sku?`SKU: ${sku}`:'SKU:';
     const skuEl=document.getElementById('L-sku');
     skuEl.textContent=skuText;
-    // Auto-scale SKU font: 48px for short (≤10), smaller for longer
+    // Auto-scale SKU font based on length
     const len=skuText.length;
     if(len<=10)skuEl.style.fontSize='48px';
     else if(len<=15)skuEl.style.fontSize='38px';
     else if(len<=20)skuEl.style.fontSize='30px';
     else skuEl.style.fontSize='24px';
-    document.getElementById('L-pi').textContent=`$ ${document.getElementById('lPI').value} MXN`;
-    document.getElementById('L-pc').textContent=`$${document.getElementById('lPC').value} MXN`;
+    // Prices
+    const pi=document.getElementById('lPI').value;
+    const pc=document.getElementById('lPC').value;
+    document.getElementById('L-pi').textContent=pi?`$ ${pi} MXN`:'';
+    document.getElementById('L-pc').textContent=pc?`$${pc} MXN`:'';
+    // Promo - only show if checkbox AND at least one promo price filled
     const pr=document.getElementById('lHP').checked;
-    document.getElementById('L-prW').style.display=pr?'block':'none';
-    document.getElementById('lblP').classList.toggle('has-promo',pr);
-    if(pr){document.getElementById('L-pri').textContent=`$ ${document.getElementById('lPrI').value} MXN`;document.getElementById('L-prc').textContent=`$${document.getElementById('lPrC').value} MXN`}
+    const priVal=document.getElementById('lPrI').value;
+    const prcVal=document.getElementById('lPrC').value;
+    const showPromo=pr&&(priVal||prcVal);
+    document.getElementById('L-prW').style.display=showPromo?'block':'none';
+    document.getElementById('lblP').classList.toggle('has-promo',showPromo);
+    if(showPromo){
+        document.getElementById('L-pri').textContent=priVal?`$ ${priVal} MXN`:'';
+        document.getElementById('L-prc').textContent=prcVal?`$${prcVal} MXN`:''}
+    // Specs
     const spTxt=document.getElementById('lSpTxt').value;
     document.getElementById('L-sp').textContent=spTxt||'';
-    document.getElementById('L-sp').style.display=spTxt?'block':'none'}
+    document.getElementById('L-sp').style.display=spTxt?'block':'none';
+    // Scale
+    setTimeout(scaleLabel,10)}
 
 function printL(){updL();window.print()}
 
