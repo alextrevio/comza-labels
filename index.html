@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v3.7 -->
+<!-- v4.0 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -107,40 +107,29 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 .pn-img img{width:100%;height:100%;object-fit:cover}
 .pn-act{display:flex;gap:6px;margin-top:16px}.pn-act .btn{flex:1}
 
-/* LABEL 4x6 - Product - EXACT replica of physical label */
+/* LABEL 4x6 - PIXEL PERFECT replica of physical COMZA label */
 .la{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
-.lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;position:sticky;top:28px}
+.lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;position:sticky;top:28px;overflow:visible}
 .lp-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t4)}
 
-.lbl{background:#fff;color:#111;width:384px;height:576px;padding:28px 26px;border-radius:0;box-shadow:0 8px 24px rgba(0,0,0,.35);font-family:'Assistant',Arial,sans-serif;display:flex;flex-direction:column;justify-content:space-between;transform-origin:top center}
-@media(max-width:500px){
-    .lp-box{position:static!important;overflow:visible}
-    .lbl{transform:scale(0.78);margin-bottom:-130px}
-}
-.lbl-top{}
-.lbl-nm{font-size:14px;font-weight:400;text-align:left;color:#777;line-height:1.35;font-style:italic;margin-bottom:6px}
-.lbl-sku{text-align:left;margin-bottom:12px;line-height:1}
-.lbl-sku .p{font-size:32px;color:#333;font-weight:900}
-.lbl-sku .v{font-size:32px;font-weight:900;color:#333}
-/* Normal prices (no promo) - big and bold like physical label */
-.lbl-prices{display:grid;grid-template-columns:1fr 1fr;margin-bottom:4px}
-.lbl-pcol{padding:3px 0}
-.lbl-pcol:first-child{text-align:left}
-.lbl-pcol:last-child{text-align:right}
-.lbl-pcol .amt{font-size:15px;font-weight:800;color:#333;margin-bottom:0;letter-spacing:.2px}
-.lbl-pcol .sub{font-size:9.5px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.2px;line-height:1.3}
-/* Promo section */
-.lbl-promo{margin-top:8px}
-.lbl-promo-hd{text-align:center;font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:5px;color:#333;margin-bottom:10px;padding-top:10px}
-.lbl-promo .lbl-pcol .amt{font-size:17px;font-weight:900;color:#333}
-.lbl-promo .lbl-pcol .sub{font-size:10px;font-weight:800;color:#555;line-height:1.3}
-/* ONLY when promo active: original prices shrink and lose bold */
-.lbl.has-promo .lbl-top>.lbl-prices .lbl-pcol .amt{font-size:12px;font-weight:400;color:#999}
-.lbl.has-promo .lbl-top>.lbl-prices .lbl-pcol .sub{font-size:8px;font-weight:400;color:#aaa}
-/* Bottom - always visible */
-.lbl-bot{margin-top:auto;padding-top:8px}
-.lbl-specs{text-align:center;font-size:12px;color:#666;letter-spacing:.3px;line-height:1.5}
-.lbl-brand{text-align:center;padding-top:10px}.lbl-brand img{height:26px}
+.label{background:#fff;width:384px;height:576px;padding:32px 30px 24px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.4);transform-origin:top center}
+.label-name{font-size:15px;font-weight:400;font-style:italic;color:#888;line-height:1.3;margin-bottom:12px}
+.label-sku{font-size:48px;font-weight:800;color:#444;line-height:1;margin-bottom:20px;letter-spacing:.5px}
+.price-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.price-col.right{text-align:right}
+.price-amount{font-size:15px;font-weight:700;color:#555;letter-spacing:.3px}
+.price-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.3px;line-height:1.4}
+.promo-section{margin-top:20px}
+.promo-title{text-align:center;font-size:24px;font-weight:800;color:#333;text-transform:uppercase;letter-spacing:6px;margin-bottom:14px}
+.promo-row .price-amount{font-size:18px;font-weight:800;color:#333}
+.promo-row .price-label{font-size:11px;font-weight:800;color:#555}
+.label.has-promo .price-row:not(.promo-row) .price-amount{font-size:13px;font-weight:400;color:#999}
+.label.has-promo .price-row:not(.promo-row) .price-label{font-size:9px;font-weight:400;color:#aaa}
+.label-spacer{flex:1}
+.label-specs{text-align:center;font-size:14px;font-weight:400;color:#666;letter-spacing:.3px;margin-bottom:16px}
+.label-brand{text-align:center}.label-brand img{height:28px}
+.lbl-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+@media(max-width:500px){.lp-box{position:static!important}.label{transform:scale(0.78);margin-bottom:-130px}}
 
 .lbl-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 
@@ -185,8 +174,8 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 
 @media print{
     body *{visibility:hidden!important}
-    .lbl,.lbl *,.lbl-sm,.lbl-sm *{visibility:visible!important}
-    .lbl{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;box-shadow:none!important;width:4in!important;height:6in!important;padding:0.25in 0.3in!important;aspect-ratio:auto!important}
+    .label,.label *,.lbl-sm,.lbl-sm *{visibility:visible!important}
+    .label{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;box-shadow:none!important;width:4in!important;height:6in!important;padding:0.3in!important}
     .lbl-sm{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;box-shadow:none!important;width:3in!important;height:1in!important;padding:0.08in!important}
 }
 @media(max-width:800px){.shell{grid-template-columns:1fr}.sb{display:none}.main{padding:14px}.la{grid-template-columns:1fr}.pn{width:100%}.pg{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
@@ -252,26 +241,23 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
     <button class="btn btn-g btn-w" style="margin-top:12px" onclick="updL()">Actualizar Vista Previa</button>
 </div>
 <div class="lp-box"><div class="lp-tag">Vista previa 4×6"</div>
-<div class="lbl" id="lblP">
-    <div class="lbl-top">
-        <div class="lbl-nm" id="L-nm">Horno Combi Rational SCC WE 202G (Reacondicionado)</div>
-        <div class="lbl-sku"><span class="p">SKU: </span><span class="v" id="L-sk">E258</span></div>
-        <div class="lbl-prices">
-            <div class="lbl-pcol"><div class="amt" id="L-pi">$ 518,400 MXN</div><div class="sub">IVA INCLUIDO</div></div>
-            <div class="lbl-pcol"><div class="amt" id="L-pc">$480,000 MXN</div><div class="sub">PAGO EN EFECTIVO</div></div>
-        </div>
-        <div class="lbl-promo" id="L-prW">
-            <div class="lbl-promo-hd">PROMOCIÓN</div>
-            <div class="lbl-prices">
-                <div class="lbl-pcol"><div class="amt" id="L-pri">$ 473,000 MXN</div><div class="sub">IVA INCLUIDO</div></div>
-                <div class="lbl-pcol"><div class="amt" id="L-prc">$430,000 MXN</div><div class="sub">PAGO EN<br>EFECTIVO</div></div>
-            </div>
+<div class="label has-promo" id="lblP">
+    <div class="label-name" id="L-nm">Horno Combi Rational SCC WE 202G (Reacondicionado)</div>
+    <div class="label-sku" id="L-sku">SKU: E258</div>
+    <div class="price-row" id="L-mainPrices">
+        <div class="price-col"><div class="price-amount" id="L-pi">$ 518,400 MXN</div><div class="price-label">IVA INCLUIDO</div></div>
+        <div class="price-col right"><div class="price-amount" id="L-pc">$480,000 MXN</div><div class="price-label">PAGO EN EFECTIVO</div></div>
+    </div>
+    <div class="promo-section" id="L-prW">
+        <div class="promo-title">PROMOCIÓN</div>
+        <div class="price-row promo-row">
+            <div class="price-col"><div class="price-amount" id="L-pri">$ 473,000 MXN</div><div class="price-label">IVA INCLUIDO</div></div>
+            <div class="price-col right"><div class="price-amount" id="L-prc">$430,000 MXN</div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
         </div>
     </div>
-    <div class="lbl-bot">
-        <div class="lbl-specs" id="L-sp">Luz 220 v / 1 ph / 20 Charolas / Gas</div>
-        <div class="lbl-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
-    </div>
+    <div class="label-spacer"></div>
+    <div class="label-specs" id="L-sp">Luz 220 v / 1 ph / 20 Charolas / Gas</div>
+    <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
 </div>
 <div class="lbl-act">
     <button class="btn btn-g" onclick="printL()">🖨️ Imprimir</button>
@@ -468,7 +454,8 @@ function togPr(){document.getElementById('prF').style.display=document.getElemen
 function updL(){
     const nm=document.getElementById('lNm').value,cd=document.getElementById('lCd').value;
     document.getElementById('L-nm').textContent=cd?`${nm} (${cd})`:nm;
-    document.getElementById('L-sk').textContent=document.getElementById('lSk').value;
+    const sku=document.getElementById('lSk').value;
+    document.getElementById('L-sku').textContent=sku?`SKU: ${sku}`:'SKU:';
     document.getElementById('L-pi').textContent=`$ ${document.getElementById('lPI').value} MXN`;
     document.getElementById('L-pc').textContent=`$${document.getElementById('lPC').value} MXN`;
     const pr=document.getElementById('lHP').checked;
