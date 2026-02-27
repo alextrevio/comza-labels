@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v4.6 -->
+<!-- v5.0 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -115,23 +115,30 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 .lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px}
 .lp-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t4)}
 .label-wrap{display:flex;justify-content:center}
-.label{background:#fff;width:384px;height:576px;padding:32px 30px 24px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.4);flex-shrink:0}
-.label-name{font-size:15px;font-weight:400;font-style:italic;color:#888;line-height:1.3;margin-bottom:12px}
-.label-sku{font-size:48px;font-weight:800;color:#444;line-height:1.05;margin-bottom:20px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word}
+.label{background:#fff;width:384px;height:576px;padding:28px 26px 20px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.4);flex-shrink:0}
+.label-name{font-size:16px;font-weight:700;color:#555;line-height:1.3;margin-bottom:10px;text-align:center}
+.label-sku{font-size:52px;font-weight:900;color:#333;line-height:1.05;margin-bottom:16px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word;text-align:center}
 .price-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
 .price-col.right{text-align:right}
-.price-amount{font-size:15px;font-weight:700;color:#555;letter-spacing:.3px}
-.price-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.3px;line-height:1.4}
-.promo-section{margin-top:20px}
-.promo-title{text-align:center;font-size:24px;font-weight:800;color:#333;text-transform:uppercase;letter-spacing:6px;margin-bottom:14px}
-.promo-row .price-amount{font-size:18px;font-weight:800;color:#333}
-.promo-row .price-label{font-size:11px;font-weight:800;color:#555}
-.label.has-promo .price-row:not(.promo-row) .price-amount{font-size:13px;font-weight:400;color:#999}
-.label.has-promo .price-row:not(.promo-row) .price-label{font-size:9px;font-weight:400;color:#aaa}
+.price-amount{font-size:16px;font-weight:700;color:#444;letter-spacing:.3px}
+.price-label{font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.3px;line-height:1.4}
+.promo-section{margin-top:16px}
+.promo-title{text-align:center;font-size:26px;font-weight:900;color:#333;text-transform:uppercase;letter-spacing:6px;margin-bottom:12px}
+.promo-row .price-amount{font-size:20px;font-weight:900;color:#222}
+.promo-row .price-label{font-size:12px;font-weight:800;color:#444}
+.label.has-promo .price-row:not(.promo-row) .price-amount{font-size:14px;font-weight:400;color:#999}
+.label.has-promo .price-row:not(.promo-row) .price-label{font-size:10px;font-weight:400;color:#aaa}
 .label-spacer{flex:1}
-.label-specs{text-align:center;font-size:14px;font-weight:400;color:#666;letter-spacing:.3px;margin-bottom:16px}
-.label-brand{text-align:center}.label-brand img{height:28px}
+.label-specs{text-align:center;font-size:15px;font-weight:500;color:#555;letter-spacing:.3px;margin-bottom:14px}
+.label-brand{text-align:center}.label-brand img{height:30px}
 .lbl-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+/* Batch print */
+.batch-labels{display:none}
+@media print{
+    .batch-labels{display:block!important}
+    .batch-labels .label{box-shadow:none;page-break-after:always;width:4in;height:6in;padding:0.25in}
+    .batch-labels .label:last-child{page-break-after:avoid}
+}
 
 /* LABEL 3x1 - Refacciones */
 .lbl-sm{background:#fff;color:#111;width:288px;height:96px;padding:8px 10px;border-radius:1px;box-shadow:0 4px 12px rgba(0,0,0,.3);font-family:'Assistant',Arial,sans-serif;display:flex;align-items:center;gap:8px}
@@ -174,8 +181,16 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 
 @media print{
     body *{visibility:hidden!important}
-    .label,.label *,.lbl-sm,.lbl-sm *{visibility:visible!important}
-    .label{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;box-shadow:none!important;width:4in!important;height:6in!important;padding:0.3in!important}
+    /* Single label print */
+    .label,.label *{visibility:visible!important}
+    .label{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;box-shadow:none!important;width:4in!important;height:6in!important;padding:0.25in!important;zoom:1!important}
+    /* Batch print - override single */
+    .batch-labels,.batch-labels *{visibility:visible!important}
+    .batch-labels{position:fixed!important;left:0!important;top:0!important;width:100%!important;display:block!important}
+    .batch-labels .label{position:relative!important;left:auto!important;top:auto!important;transform:none!important;page-break-after:always!important;margin:0!important}
+    .batch-labels .label:last-child{page-break-after:avoid!important}
+    /* Refaccion label */
+    .lbl-sm,.lbl-sm *{visibility:visible!important}
     .lbl-sm{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;box-shadow:none!important;width:3in!important;height:1in!important;padding:0.08in!important}
 }
 /* Mobile bottom nav */
@@ -219,7 +234,7 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 <!-- PRODUCTS -->
 <div class="v" id="v-products">
 <div class="hd"><div><h1>Productos</h1><div class="sub">Sincronizado con Shopify</div></div>
-<div class="hd-act"><button class="btn btn-g" onclick="opNewProd()">+ Nuevo Producto</button><button class="btn btn-o btn-sm" onclick="fetchProducts()">↻ Actualizar</button></div></div>
+<div class="hd-act"><button class="btn btn-g" onclick="opNewProd()">+ Nuevo Producto</button><button class="btn btn-b btn-sm" onclick="go('batch')">🖨️ Imprimir Lote</button><button class="btn btn-o btn-sm" onclick="fetchProducts()">↻ Actualizar</button></div></div>
 <div class="stats"><div class="st"><div class="st-l">Total</div><div class="st-v" id="sT">0</div></div><div class="st"><div class="st-l">Con SKU</div><div class="st-v" id="sS">0</div></div><div class="st"><div class="st-l">Sin SKU</div><div class="st-v" id="sN">0</div></div><div class="st"><div class="st-l">Inventario</div><div class="st-v" id="sI">0</div></div></div>
 <div class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="q" placeholder="Buscar por nombre, SKU, tipo o marca..." oninput="filterP()"></div>
 <div class="pg" id="grid"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
@@ -270,6 +285,26 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 <div class="lbl-act">
     <button class="btn btn-g" onclick="printL()">🖨️ Imprimir</button>
     <button class="btn btn-o" onclick="dlPNG('lblP','etiqueta')">📥 PNG</button></div></div></div></div>
+
+<!-- BATCH PRINT -->
+<div class="v" id="v-batch">
+<div class="hd"><div><h1>Imprimir Etiquetas en Lote</h1><div class="sub">Selecciona productos para imprimir múltiples etiquetas</div></div>
+<div class="hd-act"><button class="btn btn-o btn-sm" onclick="go('products')">← Volver</button></div></div>
+<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <button class="btn btn-g btn-sm" onclick="batchSelectAll()">✅ Seleccionar Todos</button>
+    <button class="btn btn-o btn-sm" onclick="batchSelectNone()">Deseleccionar</button>
+    <button class="btn btn-o btn-sm" onclick="batchSelectWithSKU()">Solo con SKU</button>
+    <span style="margin-left:auto;font-size:12px;color:var(--t3);align-self:center" id="batchCount">0 seleccionados</span>
+</div>
+<div class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="bQ" placeholder="Buscar productos..." oninput="filterBatch()"></div>
+<div id="batchList" style="display:flex;flex-direction:column;gap:4px;max-height:50vh;overflow-y:auto"></div>
+<div style="margin-top:14px;display:flex;gap:8px">
+    <button class="btn btn-g btn-w" onclick="printBatch()">🖨️ Imprimir Seleccionados</button>
+</div>
+</div>
+
+<!-- Batch labels container (hidden, only for print) -->
+<div class="batch-labels" id="batchLabels"></div>
 
 <!-- REFACCIONES -->
 <div class="v" id="v-refacciones">
@@ -382,14 +417,14 @@ function updSt(on){
     const t=document.getElementById('cfT');t.className=on?'tag tag-g':'tag tag-r';t.textContent=on?'Conectada':'Desconectada'}
 
 function go(v){
-    if(!S.connected&&!S.demo&&v!=='connect'&&v!=='settings'&&v!=='refacciones'&&v!=='ref-label'&&v!=='herramientas'){return}
+    if(!S.connected&&!S.demo&&v!=='connect'&&v!=='settings'&&v!=='refacciones'&&v!=='ref-label'&&v!=='herramientas'&&v!=='batch'){return}
     document.querySelectorAll('.v').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.sb-link').forEach(x=>x.classList.remove('on'));
     const el=document.getElementById('v-'+v);if(el)el.classList.add('on');
     document.querySelector(`.sb-link[data-v="${v}"]`)?.classList.add('on');
     // Mobile nav
     document.querySelectorAll('.mob-tab').forEach(x=>x.classList.remove('on'));
     document.querySelector(`.mob-tab[data-v="${v}"]`)?.classList.add('on');
-    if(v==='label'){popSel();setTimeout(scaleLabel,50)}if(v==='refacciones')renderRefs();if(v==='ref-label')popRefSel();if(v==='herramientas')renderHerr()}
+    if(v==='label'){popSel();setTimeout(scaleLabel,50)}if(v==='refacciones')renderRefs();if(v==='ref-label')popRefSel();if(v==='herramientas')renderHerr();if(v==='batch')renderBatch()}
 
 // ─── PRODUCTS ───────────────────────────────────────
 async function fetchProducts(){
@@ -480,12 +515,12 @@ function updL(){
     const skuText=sku?`SKU: ${sku}`:'SKU:';
     const skuEl=document.getElementById('L-sku');
     skuEl.textContent=skuText;
-    // Auto-scale SKU font based on length
+    // Auto-scale SKU font based on length (bigger sizes now)
     const len=skuText.length;
-    if(len<=10)skuEl.style.fontSize='48px';
-    else if(len<=15)skuEl.style.fontSize='38px';
-    else if(len<=20)skuEl.style.fontSize='30px';
-    else skuEl.style.fontSize='24px';
+    if(len<=10)skuEl.style.fontSize='52px';
+    else if(len<=15)skuEl.style.fontSize='40px';
+    else if(len<=20)skuEl.style.fontSize='32px';
+    else skuEl.style.fontSize='26px';
     // Prices
     const pi=document.getElementById('lPI').value;
     const pc=document.getElementById('lPC').value;
@@ -661,6 +696,72 @@ async function createProd(){
         if(res.error){toast('Error: '+JSON.stringify(res.error),'err');return}
         if(res.product){S.products.push(res.product);localStorage.setItem('comza_meta_'+res.product.id,JSON.stringify(d.metafields));renderP(S.products)}
         toast('Producto creado en Shopify ✓','ok');clPn()}catch(e){toast('Error de red','err')}}
+
+// ─── BATCH PRINT ────────────────────────────────────
+let batchSel=new Set();
+
+function renderBatch(){
+    const list=document.getElementById('batchList');
+    const prods=S.products.filter(p=>p.sku);
+    list.innerHTML=prods.map(p=>`<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer">
+        <input type="checkbox" class="bchk" data-id="${p.id}" ${batchSel.has(p.id)?'checked':''} onchange="batchToggle(${p.id},this.checked)" style="width:18px;height:18px;accent-color:var(--green)">
+        <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.title)}</div>
+            <div style="font-size:10px;color:var(--t3)">SKU: <span style="font-family:var(--mono);font-weight:700;color:var(--green)">${esc(p.sku)}</span> · $${fN(p.price)}</div>
+        </div>
+    </label>`).join('');
+    updBatchCount()}
+
+function filterBatch(){const q=document.getElementById('bQ').value.toLowerCase();const items=document.querySelectorAll('#batchList label');
+    items.forEach(l=>{const txt=l.textContent.toLowerCase();l.style.display=txt.includes(q)?'flex':'none'})}
+
+function batchToggle(id,on){if(on)batchSel.add(id);else batchSel.delete(id);updBatchCount()}
+function batchSelectAll(){document.querySelectorAll('.bchk').forEach(c=>{if(c.parentElement.style.display!=='none'){c.checked=true;batchSel.add(parseInt(c.dataset.id))}});updBatchCount()}
+function batchSelectNone(){batchSel.clear();document.querySelectorAll('.bchk').forEach(c=>c.checked=false);updBatchCount()}
+function batchSelectWithSKU(){batchSel.clear();S.products.forEach(p=>{if(p.sku)batchSel.add(p.id)});document.querySelectorAll('.bchk').forEach(c=>c.checked=batchSel.has(parseInt(c.dataset.id)));updBatchCount()}
+function updBatchCount(){document.getElementById('batchCount').textContent=batchSel.size+' seleccionados'}
+
+function buildLabelHTML(p){
+    const meta=JSON.parse(localStorage.getItem('comza_meta_'+p.id)||'{}');
+    const sku=p.sku||'';
+    const skuText=sku?`SKU: ${sku}`:'';
+    const skuSize=skuText.length<=10?52:skuText.length<=15?40:skuText.length<=20?32:26;
+    const price=fN(p.price);
+    const cash=fN(Math.round(parseFloat(p.price||0)/1.16).toString());
+    const hasPromo=p.compare_at_price&&parseFloat(p.compare_at_price)>0;
+    const promoPrice=hasPromo?fN(p.compare_at_price):'';
+    const promoCash=hasPromo?fN(Math.round(parseFloat(p.compare_at_price)/1.16).toString()):'';
+    // Build specs from meta
+    const specParts=[];
+    if(meta.energia)specParts.push(meta.energia);
+    if(meta.capacidad)specParts.push(meta.capacidad);
+    if(meta.gas)specParts.push(meta.gas);
+    const specs=specParts.join(' / ');
+
+    return `<div class="label${hasPromo?' has-promo':''}">
+        <div class="label-name">${esc(p.title)}</div>
+        <div class="label-sku" style="font-size:${skuSize}px">${esc(skuText)}</div>
+        <div class="price-row">
+            <div class="price-col"><div class="price-amount">$ ${price} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
+            <div class="price-col right"><div class="price-amount">$${cash} MXN</div><div class="price-label">PAGO EN EFECTIVO</div></div>
+        </div>
+        ${hasPromo?`<div class="promo-section"><div class="promo-title">PROMOCIÓN</div>
+            <div class="price-row promo-row">
+                <div class="price-col"><div class="price-amount">$ ${promoPrice} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
+                <div class="price-col right"><div class="price-amount">$${promoCash} MXN</div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
+            </div></div>`:''}
+        <div class="label-spacer"></div>
+        ${specs?`<div class="label-specs">${esc(specs)}</div>`:''}
+        <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
+    </div>`}
+
+function printBatch(){
+    if(batchSel.size===0){toast('Selecciona al menos un producto','err');return}
+    const container=document.getElementById('batchLabels');
+    const selected=S.products.filter(p=>batchSel.has(p.id));
+    container.innerHTML=selected.map(p=>buildLabelHTML(p)).join('');
+    toast(`Imprimiendo ${selected.length} etiquetas...`,'ok');
+    setTimeout(()=>window.print(),300)}
 
 // ─── HERRAMIENTAS ───────────────────────────────────
 const H_ESTADOS=['Disponible','En Préstamo','En Reparación','Baja'];
