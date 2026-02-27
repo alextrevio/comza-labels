@@ -120,8 +120,11 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 .lbl-cl .a{font-size:16px;font-weight:800;color:#000;margin-bottom:1px}.lbl-cl .s{font-size:10px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.3px}
 .lbl-cl:last-child .a{color:#555}
 .lbl-sep{border:none;border-top:2px solid #ccc;margin:10px 0 8px}
-.lbl-promo-title{text-align:center;font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:3px;color:#000;margin-bottom:8px}
-.lbl-pr-rw .lbl-cl .a{font-size:18px}.lbl-pr-rw .lbl-cl .s{font-size:11px}
+.lbl-promo-title{text-align:center;font-size:22px;font-weight:900;text-transform:uppercase;letter-spacing:4px;color:#000;margin-bottom:10px}
+.lbl-pr-rw .lbl-cl .a{font-size:20px;font-weight:900}.lbl-pr-rw .lbl-cl .s{font-size:12px;font-weight:800}
+/* When promo active: original prices shrink, no bold */
+.lbl.has-promo .lbl-rw:not(.lbl-pr-rw) .lbl-cl .a{font-size:13px;font-weight:400;color:#888}
+.lbl.has-promo .lbl-rw:not(.lbl-pr-rw) .lbl-cl .s{font-size:9px;font-weight:400;color:#999}
 .lbl-specs{text-align:center;font-size:13px;color:#555;letter-spacing:.3px;padding-top:14px;border-top:1px solid #ddd;margin-top:12px;line-height:1.6}
 .lbl-brand{text-align:center;margin-top:auto;padding-top:12px}.lbl-brand img{height:28px}
 
@@ -357,19 +360,32 @@ function filterP(){const q=document.getElementById('q').value.toLowerCase().trim
     renderP(S.products.filter(p=>p.title.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q)||(p.product_type||'').toLowerCase().includes(q)||(p.vendor||'').toLowerCase().includes(q)))}
 
 function opEd(id){const p=S.products.find(x=>x.id===id);if(!p)return;
+    const cashPrice=parseFloat(p.price||0)*0.9;
+    // Load saved meta from localStorage
+    const meta=JSON.parse(localStorage.getItem('comza_meta_'+id)||'{}');
     document.getElementById('panTitle').textContent='Editar Producto';
     document.getElementById('panB').innerHTML=`<div class="pn-img">${p.image?`<img src="${p.image}">`:'<div style="color:var(--t4);font-size:10px">Sin imagen</div>'}</div>
         <div class="fg"><label>Nombre</label><input type="text" id="eT" value="${escA(p.title)}"></div>
         <div class="fg-row"><div class="fg"><label>SKU</label><input type="text" id="eS" value="${escA(p.sku)}" style="font-family:var(--mono);font-weight:600"></div><div class="fg"><label>Tipo</label><input type="text" id="eY" value="${escA(p.product_type)}"></div></div>
-        <div class="fg-row"><div class="fg"><label>Precio</label><input type="text" id="eP" value="${p.price}"></div><div class="fg"><label>Precio comp.</label><input type="text" id="eC" value="${p.compare_at_price||''}"></div></div>
-        <div class="fg"><label>Marca</label><input type="text" id="eV" value="${escA(p.vendor)}"></div>
+        <div class="fg-row"><div class="fg"><label>Precio Publicado (IVA)</label><input type="text" id="eP" value="${p.price}"></div><div class="fg"><label>Precio Efectivo (-10%)</label><input type="text" value="$${fN(Math.round(cashPrice).toString())}" disabled style="color:var(--green);font-weight:700"></div></div>
+        <div class="fg-row"><div class="fg"><label>Precio comp. (promo)</label><input type="text" id="eC" value="${p.compare_at_price||''}"></div><div class="fg"><label>Marca</label><input type="text" id="eV" value="${escA(p.vendor)}"></div></div>
         <div class="fg"><label>Tags</label><input type="text" id="eG" value="${escA(p.tags)}"></div>
+        <div style="margin-top:12px;padding:12px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border2)">
+            <div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">📋 Datos Internos COMZA</div>
+            <div class="fg-row"><div class="fg"><label>Fecha de Compra</label><input type="date" id="mFc" value="${escA(meta.fecha_compra||'')}"></div><div class="fg"><label>Lugar de Compra</label><input type="text" id="mLc" value="${escA(meta.lugar_compra||'')}"></div></div>
+            <div class="fg"><label>Número de Pedimento</label><input type="text" id="mPd" value="${escA(meta.pedimento||'')}" style="font-family:var(--mono)"></div>
+            <div class="fg-row"><div class="fg"><label>Costo de Adquisición</label><input type="text" id="mCa" value="${escA(meta.costo_adquisicion||'')}" placeholder="$0"></div><div class="fg"><label>Gasto de Reparación</label><input type="text" id="mGr" value="${escA(meta.gasto_reparacion||'')}" placeholder="$0"></div></div>
+            <div class="fg-row3"><div class="fg"><label>Energía</label><input type="text" id="mEn" value="${escA(meta.energia||'')}"></div><div class="fg"><label>Gas</label><input type="text" id="mGs" value="${escA(meta.gas||'')}"></div><div class="fg"><label>Capacidad</label><input type="text" id="mCp" value="${escA(meta.capacidad||'')}"></div></div>
+        </div>
         <div class="pn-act"><button class="btn btn-o" onclick="clPn()">Cancelar</button><button class="btn btn-g" onclick="savP(${p.id},${p.variant_id})">Guardar</button></div>
         <div style="text-align:center;margin-top:10px"><button class="btn btn-o btn-sm" onclick="goL(${p.id});clPn()">Imprimir etiqueta →</button></div>`;
     opPn()}
 
 async function savP(id,vid){
     const u={title:document.getElementById('eT').value,sku:document.getElementById('eS').value,product_type:document.getElementById('eY').value,price:document.getElementById('eP').value,compare_at_price:document.getElementById('eC').value||null,vendor:document.getElementById('eV').value,tags:document.getElementById('eG').value};
+    // Save internal meta fields locally
+    const meta={fecha_compra:document.getElementById('mFc').value,lugar_compra:document.getElementById('mLc').value,pedimento:document.getElementById('mPd').value,costo_adquisicion:document.getElementById('mCa').value,gasto_reparacion:document.getElementById('mGr').value,energia:document.getElementById('mEn').value,gas:document.getElementById('mGs').value,capacidad:document.getElementById('mCp').value};
+    localStorage.setItem('comza_meta_'+id,JSON.stringify(meta));
     const i=S.products.findIndex(p=>p.id===id);if(i>=0)S.products[i]={...S.products[i],...u};
     if(!S.demo){try{const r=await fetch(API+`/api/products/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...u,variants:[{id:vid,sku:u.sku,price:u.price,compare_at_price:u.compare_at_price}]})});const d=await r.json();
         if(d.error)toast('Error: '+JSON.stringify(d.error),'err');else{if(i>=0&&d.product)S.products[i]=d.product;toast('Guardado ✓','ok')}}catch(e){toast('Error de red','err')}}
@@ -386,9 +402,14 @@ function fillL(){const id=parseInt(document.getElementById('lSel').value);if(!id
     document.getElementById('lPI').value=fN(p.price);autoCalcCash();
     if(p.compare_at_price&&parseFloat(p.compare_at_price)>0){document.getElementById('lHP').checked=true;togPr();document.getElementById('lPrI').value=fN(p.compare_at_price);autoCalcPromoCash()}
     else{document.getElementById('lHP').checked=false;togPr()}
-    const desc=p.body_html?p.body_html.replace(/<[^>]*>/g,'').trim():'';
-    document.getElementById('lSpE').value='';document.getElementById('lSpG').value='';document.getElementById('lSpC').value='';
-    if(desc){const parts=desc.split('/').map(s=>s.trim());if(parts.length>=1)document.getElementById('lSpE').value=parts[0];if(parts.length>=2)document.getElementById('lSpG').value=parts[parts.length-1];if(parts.length>=3)document.getElementById('lSpC').value=parts.slice(1,-1).join(' / ')}
+    // Load specs from meta if available, otherwise try to parse from description
+    const meta=JSON.parse(localStorage.getItem('comza_meta_'+id)||'{}');
+    if(meta.energia||meta.gas||meta.capacidad){
+        document.getElementById('lSpE').value=meta.energia||'';document.getElementById('lSpG').value=meta.gas||'';document.getElementById('lSpC').value=meta.capacidad||'';
+    }else{
+        const desc=p.body_html?p.body_html.replace(/<[^>]*>/g,'').trim():'';
+        document.getElementById('lSpE').value='';document.getElementById('lSpG').value='';document.getElementById('lSpC').value='';
+        if(desc){const parts=desc.split('/').map(s=>s.trim());if(parts.length>=1)document.getElementById('lSpE').value=parts[0];if(parts.length>=2)document.getElementById('lSpG').value=parts[parts.length-1];if(parts.length>=3)document.getElementById('lSpC').value=parts.slice(1,-1).join(' / ')}}
     updL()}
 
 function goL(id){go('label');setTimeout(()=>{document.getElementById('lSel').value=id;fillL()},50)}
@@ -400,7 +421,10 @@ function updL(){
     document.getElementById('L-sk').textContent=document.getElementById('lSk').value;
     document.getElementById('L-pi').textContent=`$${document.getElementById('lPI').value} MXN`;
     document.getElementById('L-pc').textContent=`$${document.getElementById('lPC').value} MXN`;
-    const pr=document.getElementById('lHP').checked;document.getElementById('L-prW').style.display=pr?'block':'none';
+    const pr=document.getElementById('lHP').checked;
+    document.getElementById('L-prW').style.display=pr?'block':'none';
+    // Toggle class: when promo active, original prices shrink
+    document.getElementById('lblP').classList.toggle('has-promo',pr);
     if(pr){document.getElementById('L-pri').textContent=`$${document.getElementById('lPrI').value} MXN`;document.getElementById('L-prc').textContent=`$${document.getElementById('lPrC').value} MXN`}
     const specs=[];
     if(document.getElementById('lSpE').value)specs.push(document.getElementById('lSpE').value);
