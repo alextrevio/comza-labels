@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v4.0 -->
+<!-- v4.1 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -114,7 +114,7 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 
 .label{background:#fff;width:384px;height:576px;padding:32px 30px 24px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.4);transform-origin:top center}
 .label-name{font-size:15px;font-weight:400;font-style:italic;color:#888;line-height:1.3;margin-bottom:12px}
-.label-sku{font-size:48px;font-weight:800;color:#444;line-height:1;margin-bottom:20px;letter-spacing:.5px}
+.label-sku{font-size:48px;font-weight:800;color:#444;line-height:1;margin-bottom:20px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word}
 .price-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
 .price-col.right{text-align:right}
 .price-amount{font-size:15px;font-weight:700;color:#555;letter-spacing:.3px}
@@ -222,23 +222,22 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
 <div class="hd"><div><h1>Etiqueta de Producto</h1><div class="sub">Formato 4×6 pulgadas para impresora térmica HP</div></div></div>
 <div class="la"><div>
     <div class="fg"><label>Producto</label><select id="lSel" onchange="fillL()"><option value="">— Seleccionar —</option></select></div>
-    <div class="fg"><label>Nombre</label><input type="text" id="lNm" placeholder="Horno Combi Rational SCC WE 202G"></div>
-    <div class="fg"><label>Condición</label><input type="text" id="lCd" placeholder="Reacondicionado"></div>
-    <div class="fg"><label>SKU</label><input type="text" id="lSk" placeholder="E258" style="font-family:var(--mono);font-size:14px;font-weight:700"></div>
+    <div class="fg"><label>Nombre</label><input type="text" id="lNm" placeholder="Horno Combi Rational SCC WE 202G" oninput="updL()"></div>
+    <div class="fg"><label>Condición</label><input type="text" id="lCd" placeholder="Reacondicionado" oninput="updL()"></div>
+    <div class="fg"><label>SKU</label><input type="text" id="lSk" placeholder="E258" style="font-family:var(--mono);font-size:14px;font-weight:700" oninput="updL()"></div>
     <div class="fg-row">
-        <div class="fg"><label>Precio IVA Incluido</label><input type="text" id="lPI" placeholder="518,400"></div>
-        <div class="fg"><label>Precio Pago en Efectivo</label><input type="text" id="lPC" placeholder="480,000"></div>
+        <div class="fg"><label>Precio IVA Incluido</label><input type="text" id="lPI" placeholder="518,400" oninput="updL()"></div>
+        <div class="fg"><label>Precio Pago en Efectivo</label><input type="text" id="lPC" placeholder="480,000" oninput="updL()"></div>
     </div>
-    <div class="prb"><div class="prb-h"><span>🏷️ Promoción</span><label class="chk"><input type="checkbox" id="lHP" onchange="togPr()"> Activar</label></div>
+    <div class="prb"><div class="prb-h"><span>🏷️ Promoción</span><label class="chk"><input type="checkbox" id="lHP" onchange="togPr();updL()"> Activar</label></div>
     <div id="prF" style="display:none"><div class="fg-row">
-        <div class="fg" style="margin:0"><label>Promo IVA Incluido</label><input type="text" id="lPrI" placeholder="473,000"></div>
-        <div class="fg" style="margin:0"><label>Promo Pago en Efectivo</label><input type="text" id="lPrC" placeholder="430,000"></div>
+        <div class="fg" style="margin:0"><label>Promo IVA Incluido</label><input type="text" id="lPrI" placeholder="473,000" oninput="updL()"></div>
+        <div class="fg" style="margin:0"><label>Promo Pago en Efectivo</label><input type="text" id="lPrC" placeholder="430,000" oninput="updL()"></div>
     </div></div></div>
     <div style="margin-top:8px;padding:10px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border2)">
         <div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Especificaciones (para etiqueta)</div>
-        <div class="fg" style="margin:0"><label>Texto de especificaciones</label><input type="text" id="lSpTxt" placeholder="Luz 220 v / 1 ph / 20 Charolas / Gas"></div>
+        <div class="fg" style="margin:0"><label>Texto de especificaciones</label><input type="text" id="lSpTxt" placeholder="Luz 220 v / 1 ph / 20 Charolas / Gas" oninput="updL()"></div>
     </div>
-    <button class="btn btn-g btn-w" style="margin-top:12px" onclick="updL()">Actualizar Vista Previa</button>
 </div>
 <div class="lp-box"><div class="lp-tag">Vista previa 4×6"</div>
 <div class="label has-promo" id="lblP">
@@ -455,14 +454,24 @@ function updL(){
     const nm=document.getElementById('lNm').value,cd=document.getElementById('lCd').value;
     document.getElementById('L-nm').textContent=cd?`${nm} (${cd})`:nm;
     const sku=document.getElementById('lSk').value;
-    document.getElementById('L-sku').textContent=sku?`SKU: ${sku}`:'SKU:';
+    const skuText=sku?`SKU: ${sku}`:'SKU:';
+    const skuEl=document.getElementById('L-sku');
+    skuEl.textContent=skuText;
+    // Auto-scale SKU font: 48px for short (≤10), smaller for longer
+    const len=skuText.length;
+    if(len<=10)skuEl.style.fontSize='48px';
+    else if(len<=15)skuEl.style.fontSize='38px';
+    else if(len<=20)skuEl.style.fontSize='30px';
+    else skuEl.style.fontSize='24px';
     document.getElementById('L-pi').textContent=`$ ${document.getElementById('lPI').value} MXN`;
     document.getElementById('L-pc').textContent=`$${document.getElementById('lPC').value} MXN`;
     const pr=document.getElementById('lHP').checked;
     document.getElementById('L-prW').style.display=pr?'block':'none';
     document.getElementById('lblP').classList.toggle('has-promo',pr);
     if(pr){document.getElementById('L-pri').textContent=`$ ${document.getElementById('lPrI').value} MXN`;document.getElementById('L-prc').textContent=`$${document.getElementById('lPrC').value} MXN`}
-    document.getElementById('L-sp').textContent=document.getElementById('lSpTxt').value||''}
+    const spTxt=document.getElementById('lSpTxt').value;
+    document.getElementById('L-sp').textContent=spTxt||'';
+    document.getElementById('L-sp').style.display=spTxt?'block':'none'}
 
 function printL(){updL();window.print()}
 
