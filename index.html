@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v4.4 -->
+<!-- v4.5 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -178,7 +178,14 @@ body{font-family:var(--font);background:var(--black);color:var(--t1);min-height:
     .label{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;box-shadow:none!important;width:4in!important;height:6in!important;padding:0.3in!important}
     .lbl-sm{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;box-shadow:none!important;width:3in!important;height:1in!important;padding:0.08in!important}
 }
-@media(max-width:800px){.shell{grid-template-columns:1fr}.sb{display:none}.main{padding:14px}.la{grid-template-columns:1fr}.pn{width:100%}.pg{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+/* Mobile bottom nav */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg1);border-top:1px solid var(--border);z-index:200;padding:6px 0 env(safe-area-inset-bottom,8px)}
+.mob-nav-inner{display:flex;justify-content:space-around;align-items:center}
+.mob-tab{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px;color:var(--t4);font-size:9px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;min-width:0;flex:1}
+.mob-tab svg{width:20px;height:20px;flex-shrink:0}
+.mob-tab.on{color:var(--green)}
+.mob-tab .mob-badge{background:var(--green);color:#000;font-size:8px;font-weight:700;padding:0 4px;border-radius:8px;line-height:14px}
+@media(max-width:800px){.shell{grid-template-columns:1fr}.sb{display:none}.main{padding:14px;padding-bottom:80px}.la{grid-template-columns:1fr}.pn{width:100%}.pg{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.mob-nav{display:block}}
 </style>
 </head>
 <body>
@@ -378,6 +385,9 @@ function go(v){
     document.querySelectorAll('.v').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.sb-link').forEach(x=>x.classList.remove('on'));
     const el=document.getElementById('v-'+v);if(el)el.classList.add('on');
     document.querySelector(`.sb-link[data-v="${v}"]`)?.classList.add('on');
+    // Mobile nav
+    document.querySelectorAll('.mob-tab').forEach(x=>x.classList.remove('on'));
+    document.querySelector(`.mob-tab[data-v="${v}"]`)?.classList.add('on');
     if(v==='label'){popSel();setTimeout(scaleLabel,50)}if(v==='refacciones')renderRefs();if(v==='ref-label')popRefSel();if(v==='herramientas')renderHerr()}
 
 // ─── PRODUCTS ───────────────────────────────────────
@@ -735,5 +745,31 @@ async function importHerr(e){const f=e.target.files[0];if(!f)return;const t=awai
 
 init();
 </script>
+
+<!-- Mobile Bottom Nav -->
+<nav class="mob-nav" id="mobNav">
+<div class="mob-nav-inner">
+    <div class="mob-tab on" data-v="products" onclick="go('products')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Productos
+    </div>
+    <div class="mob-tab" data-v="label" onclick="go('label')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="1"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="15" y2="10"/></svg>
+        Etiqueta
+    </div>
+    <div class="mob-tab" data-v="refacciones" onclick="go('refacciones')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        Refacc.
+    </div>
+    <div class="mob-tab" data-v="herramientas" onclick="go('herramientas')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        Herram.
+    </div>
+    <div class="mob-tab" data-v="settings" onclick="go('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        Config
+    </div>
+</div>
+</nav>
 </body>
 </html>
