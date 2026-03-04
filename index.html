@@ -123,6 +123,12 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .label-spacer{flex:1}
 .label-specs{text-align:center;font-size:14px;font-weight:500;color:#555;letter-spacing:.3px;margin-bottom:14px}
 .label-brand{text-align:center}.label-brand img{height:30px}
+
+/* MODO ETIQUETA POR REPARAR GIGANTE HORIZONTAL */
+.label.is-repair { justify-content: center; align-items: center; padding: 0; }
+.label.is-repair > *:not(.label-sku) { display: none !important; }
+.label.is-repair .label-sku { display: block !important; transform: rotate(-90deg); margin: 0; color: #000; letter-spacing: 2px; }
+
 .lbl-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .prb{background:var(--bg3);border:1px dashed var(--border2);border-radius:var(--r);padding:10px;margin-top:4px}
 .prb-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
@@ -300,6 +306,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
         <option value="Nuevo">Nuevo</option>
         <option value="Seminuevo">Seminuevo</option>
         <option value="Usado">Usado</option>
+        <option value="Por Reparar">Por Reparar</option>
       </select>
     </div>
     <div class="fg">
@@ -469,7 +476,8 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
         <span style="font-family:var(--mono);background:var(--bg2);padding:1px 6px;border-radius:4px;border:1px solid var(--border);margin-right:4px">Reacondicionado</span>
         <span style="font-family:var(--mono);background:var(--bg2);padding:1px 6px;border-radius:4px;border:1px solid var(--border);margin-right:4px">Nuevo</span>
         <span style="font-family:var(--mono);background:var(--bg2);padding:1px 6px;border-radius:4px;border:1px solid var(--border);margin-right:4px">Seminuevo</span>
-        <span style="font-family:var(--mono);background:var(--bg2);padding:1px 6px;border-radius:4px;border:1px solid var(--border)">Usado</span>
+        <span style="font-family:var(--mono);background:var(--bg2);padding:1px 6px;border-radius:4px;border:1px solid var(--border);margin-right:4px">Usado</span>
+        <span style="font-family:var(--mono);background:var(--bg2);padding:1px 6px;border-radius:4px;border:1px solid var(--border)">Por Reparar</span>
       </div>
     </div>
     <div style="padding:10px;background:var(--bg3);border-radius:var(--r);border-left:3px solid var(--amber)">
@@ -604,7 +612,6 @@ function renderP(p){
       <button class="btn btn-g" onclick="event.stopPropagation();goL(${x.id})">Etiqueta</button>
     </div></div>`).join('')}
 
-// Lógica de llenado de filtros dinámico
 function populateFilters() {
   const brands = [...new Set(S.products.map(p => p.vendor).filter(Boolean))].sort();
   const tags = [...new Set(S.products.map(p => getCondFromTags(p.tags)).filter(Boolean))].sort();
@@ -616,7 +623,6 @@ function populateFilters() {
     tags.map(t => `<option value="${t}">${t}</option>`).join('');
 }
 
-// Nueva lógica de filtrado combinado
 function filterP(){
   const q = document.getElementById('q').value.toLowerCase().trim();
   const brand = document.getElementById('filterBrand').value;
@@ -728,6 +734,7 @@ function getCondFromTags(tags){
   if(t.includes('nuevo'))return'Nuevo';
   if(t.includes('seminuevo'))return'Seminuevo';
   if(t.includes('usado'))return'Usado';
+  if(t.includes('por reparar'))return'Por Reparar';
   return'';}
 
 function stripHtml(html){
@@ -774,14 +781,26 @@ function togPr(){document.getElementById('prF').style.display=document.getElemen
 function updL(){
   const nm=document.getElementById('lNm').value;
   const cd=document.getElementById('lCd').value;
+  const isRepair = (cd === 'Por Reparar');
+  
+  // Activar o desactivar modo gigante
+  document.getElementById('lblP').classList.toggle('is-repair', isRepair);
+  
   document.getElementById('L-nm').textContent=cd?`${nm} (${cd})`:nm||'Nombre del Producto';
 
   const sku=document.getElementById('lSk').value;
-  const skuTxt=sku?`SKU: ${sku}`:'SKU:';
+  
+  // Si es para reparar, mostramos solo el SKU gigante, sin "SKU: "
+  const skuTxt = isRepair ? (sku || 'S/N') : (sku ? `SKU: ${sku}`:'SKU:');
   const skuEl=document.getElementById('L-sku');
   skuEl.textContent=skuTxt;
   const l=skuTxt.length;
-  skuEl.style.fontSize=l<=10?'52px':l<=15?'40px':l<=20?'32px':'26px';
+  
+  if(isRepair){
+      skuEl.style.fontSize = l <= 5 ? '160px' : l <= 8 ? '120px' : '90px';
+  } else {
+      skuEl.style.fontSize=l<=10?'52px':l<=15?'40px':l<=20?'32px':'26px';
+  }
 
   const pi=document.getElementById('lPI').value;
   const pc=document.getElementById('lPC').value;
@@ -793,7 +812,8 @@ function updL(){
   const prcV=document.getElementById('lPrC').value;
   const showPromo=pr&&(priV||prcV);
   document.getElementById('L-prW').style.display=showPromo?'block':'none';
-  document.getElementById('lblP').classList.toggle('has-promo',showPromo);
+  if(!isRepair) document.getElementById('lblP').classList.toggle('has-promo',showPromo);
+  
   if(showPromo){
     document.getElementById('L-pri').textContent=priV?`$ ${priV} MXN`:'';
     document.getElementById('L-prc').textContent=prcV?`$${prcV} MXN`:'';}
@@ -1032,15 +1052,29 @@ function batchSelectWithSKU(){batchSel.clear();S.products.forEach(p=>{if(p.sku)b
 function updBatchCount(){document.getElementById('batchCount').textContent=batchSel.size+' seleccionados'}
 
 function buildLabelHTML(p){
-  const sku=p.sku||'';const skuTxt=sku?`SKU: ${sku}`:'';
+  const cond=getCondFromTags(p.tags);
+  const isRepair = (cond === 'Por Reparar');
+  const sku=p.sku||'';
+
+  // Si es para reparar, generamos el layout gigante horizontal
+  if(isRepair){
+     const rawSku = sku || 'S/N';
+     const l = rawSku.length;
+     const sz = l <= 5 ? 160 : l <= 8 ? 120 : 90;
+     return`<div class="label is-repair">
+       <div class="label-sku" style="font-size:${sz}px">${esc(rawSku)}</div>
+     </div>`;
+  }
+
+  const skuTxt=sku?`SKU: ${sku}`:'';
   const sz=skuTxt.length<=10?52:skuTxt.length<=15?40:skuTxt.length<=20?32:26;
   const price=parseFloat(p.price||0);const cap=parseFloat(p.compare_at_price||0);
   const hasPromo=cap>0&&cap>price;
-  const cond=getCondFromTags(p.tags);
   const displayName=cond?`${p.title} (${cond})`:p.title;
   const mainIva=fN(hasPromo?p.compare_at_price:p.price);
   const mainCash=fN(Math.round((hasPromo?cap:price)/1.16).toString());
   const specs=stripHtml(p.body_html||'');
+  
   return`<div class="label${hasPromo?' has-promo':''}">
     <div class="label-name">${esc(displayName)}</div>
     <div class="label-sku" style="font-size:${sz}px">${esc(skuTxt)}</div>
@@ -1122,7 +1156,10 @@ function loadDemo(){
       price:'45600.00',compare_at_price:null,inventory_quantity:5,image:null,variant_id:102,status:'active'},
     {id:3,title:'Freidora Doble Pitco SSH55',body_html:'Gas LP / 2 canastas / 35 lbs',
       vendor:'Pitco',product_type:'Cocción',tags:'Reacondicionado',sku:'F301',
-      price:'110000.00',compare_at_price:'121000.00',inventory_quantity:4,image:null,variant_id:103,status:'active'}];
+      price:'110000.00',compare_at_price:'121000.00',inventory_quantity:4,image:null,variant_id:103,status:'active'},
+    {id:4,title:'Licuadora Vitamix The Quiet One (Falla motor)',body_html:'120v / 1 ph',
+      vendor:'Vitamix',product_type:'Licuadoras',tags:'Por Reparar',sku:'L999',
+      price:'0.00',compare_at_price:null,inventory_quantity:1,image:null,variant_id:104,status:'active'}];
   updSt(true);
   populateFilters();
   renderP(S.products);
