@@ -138,60 +138,71 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 
 /* === CORRECCIÓN DE IMPRESIÓN === */
 @media print {
-  @page { margin: 0; }
-  body * { visibility: hidden !important; }
+  @page { margin: 0; size: 4in 6in; }
   
-  /* Etiqueta individual */
-  .v.on .label, .v.on .label * { visibility: visible !important; }
-  .v.on .label {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    transform: none !important; /* <- Esto evita que la térmica la voltee */
-    box-shadow: none !important;
-    width: 4in !important;
-    height: 6in !important;
-    padding: 0.25in !important;
-    border: none !important;
-    margin: 0 !important;
+  /* Ocultar interfaz gráfica completa cuando estamos en modo impresión especial */
+  body.is-printing-single > .shell,
+  body.is-printing-batch > .shell,
+  body.is-printing-ref > .shell,
+  .mob-nav, .tst-c, .po, .pn { 
+    display: none !important; 
   }
-  
-  /* Etiquetas en Lote */
-  .batch-labels, .batch-labels * { visibility: visible !important; }
-  .batch-labels { 
-    position: absolute !important; 
-    left: 0 !important; 
-    top: 0 !important; 
-    width: 100% !important; 
-    display: block !important; 
-  }
-  .batch-labels .label {
-    position: relative !important;
-    left: 0 !important;
-    top: 0 !important;
-    transform: none !important;
-    page-break-after: always !important;
-    width: 4in !important;
-    height: 6in !important;
-    padding: 0.25in !important;
-    border: none !important;
-    margin: 0 !important;
-  }
-  .batch-labels .label:last-child { page-break-after: avoid !important; }
 
-  /* Etiqueta Refacción */
-  .lbl-sm, .lbl-sm * { visibility: visible !important; }
-  .lbl-sm {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    transform: none !important;
+  body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+  
+  /* Forzar colores de fondo para que aparezcan las cajas de color (Safari/Chrome) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 1. Etiqueta Única 4x6 */
+  #print-clone {
+    display: flex !important;
+    width: 4in !important;
+    height: 6in !important;
+    box-sizing: border-box !important;
+    padding: 0.25in !important;
+    margin: 0 !important;
+    background: white !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* 2. Lote de Etiquetas 4x6 */
+  #batchLabels {
+    display: block !important;
+    width: 100% !important;
+  }
+  #batchLabels .label {
+    width: 4in !important;
+    height: 6in !important;
+    box-sizing: border-box !important;
+    padding: 0.25in !important;
+    margin: 0 !important;
+    border: none !important;
     box-shadow: none !important;
+    page-break-after: always !important;
+  }
+  #batchLabels .label:last-child { 
+    page-break-after: avoid !important; 
+  }
+
+  /* 3. Refacción 3x1 */
+  #print-clone-ref {
+    display: flex !important;
     width: 3in !important;
     height: 1in !important;
+    box-sizing: border-box !important;
     padding: 0.08in !important;
-    border: none !important;
     margin: 0 !important;
+    background: white !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
   }
 }
 
@@ -629,7 +640,7 @@ async function fetchProducts(){
   if(S.demo)return;
   document.getElementById('grid').innerHTML='<div class="loading"><div class="spinner"></div>Cargando...</div>';
   try{
-    // FIX: Agregamos status=any para que Shopify devuelva Borradores y Archivados también
+    // FIX: ?status=any para que Shopify mande Borradores y Archivados también
     const r=await fetch(API+'/api/products?status=any');const d=await r.json();
     if(d.error){toast(d.error,'err');return}
     S.products=d.products||[];
@@ -874,7 +885,30 @@ function updL(){
 
   setTimeout(scaleLabel,10);}
 
-function printL(){updL();window.print()}
+// FIX: Función de Imprimir rediseñada usando "Clonación" para evitar errores de Safari
+function printL(){
+  updL();
+  const original = document.getElementById('lblP');
+  const clone = original.cloneNode(true);
+  clone.id = 'print-clone';
+  // Quitamos cualquier rastro del zoom que la vista previa inserta
+  clone.style.zoom = '1';
+  clone.style.transform = 'none';
+  clone.style.position = 'absolute';
+  clone.style.top = '0';
+  clone.style.left = '0';
+  
+  // Lo mandamos hasta arriba del body y ocultamos lo demás para forzar un lienzo en blanco
+  document.body.appendChild(clone);
+  document.body.classList.add('is-printing-single');
+  
+  setTimeout(() => {
+    window.print();
+    // Limpiamos al terminar
+    document.body.classList.remove('is-printing-single');
+    clone.remove();
+  }, 150);
+}
 
 // ── REFACCIONES ──────────────────────────────────────
 const ESTADOS=['Sin información','Funciona','No funciona','Por reparar','En Reparación','Baja','En Préstamo'];
@@ -981,7 +1015,25 @@ function updRL(){
   new QRCode(qrDiv,{text:JSON.stringify({id:rid,nombre:nm,condicion:cd,empresa:'Grupo COMZA'}),
     width:76,height:76,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M})}
 
-function printRL(){updRL();setTimeout(()=>window.print(),200)}
+// FIX: Función Imprimir clonada para Refacciones
+function printRL(){
+  updRL();
+  const original = document.getElementById('lblR');
+  const clone = original.cloneNode(true);
+  clone.id = 'print-clone-ref';
+  clone.style.position = 'absolute';
+  clone.style.top = '0';
+  clone.style.left = '0';
+  
+  document.body.appendChild(clone);
+  document.body.classList.add('is-printing-ref');
+
+  setTimeout(() => {
+    window.print();
+    document.body.classList.remove('is-printing-ref');
+    clone.remove();
+  }, 150);
+}
 
 // ── HERRAMIENTAS ─────────────────────────────────────
 const H_ESTADOS=['Disponible','En Préstamo','En Reparación','Baja'];
@@ -1102,7 +1154,6 @@ function buildLabelHTML(p){
   const isRepair = (cond === 'Por Reparar');
   const sku=p.sku||'';
 
-  // Si es para reparar, generamos el layout gigante horizontal
   if(isRepair){
      const rawSku = sku || 'S/N';
      const l = rawSku.length;
@@ -1138,6 +1189,7 @@ function buildLabelHTML(p){
     <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
   </div>`}
 
+// FIX: Función Imprimir en Lote rediseñada para Safari/Mac
 function printBatch(){
   if(batchSel.size===0){toast('Selecciona al menos un producto','err');return}
   const selected=S.products.filter(p=>batchSel.has(p.id));
@@ -1147,8 +1199,14 @@ function printBatch(){
     el.style.fontSize = el.textContent.length > 13 ? '18px' : el.textContent.length > 10 ? '21px' : '';
   });
 
+  document.body.classList.add('is-printing-batch');
   toast(`Imprimiendo ${selected.length} etiquetas...`,'ok');
-  setTimeout(()=>window.print(),300)}
+  
+  setTimeout(()=>{
+    window.print();
+    document.body.classList.remove('is-printing-batch');
+  }, 200);
+}
 
 // ── NEW PRODUCT ──────────────────────────────────────
 function opNewProd(){
@@ -1205,7 +1263,7 @@ function loadDemo(){
       price:'110000.00',compare_at_price:'121000.00',inventory_quantity:4,image:null,variant_id:103,status:'active'},
     {id:4,title:'Licuadora Vitamix The Quiet One (Falla motor)',body_html:'120v / 1 ph',
       vendor:'Vitamix',product_type:'Licuadoras',tags:'Por Reparar',sku:'L999',
-      price:'0.00',compare_at_price:null,inventory_quantity:1,image:null,variant_id:104,status:'active'}];
+      price:'0.00',compare_at_price:null,inventory_quantity:1,image:null,variant_id:104,status:'draft'}];
   updSt(true);
   populateFilters();
   renderP(S.products);
