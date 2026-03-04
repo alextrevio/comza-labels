@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- v7.0 - White/Blue + Label fixes -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -106,17 +105,21 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .label{background:#fff;width:384px;height:576px;padding:28px 26px 20px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.15);flex-shrink:0;border:1px solid #e0e0e0}
 .label-name{font-size:16px;font-weight:700;color:#555;line-height:1.3;margin-bottom:10px;text-align:center}
 .label-sku{font-size:52px;font-weight:900;color:#333;line-height:1.05;margin-bottom:16px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word;text-align:center}
-.price-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
-.price-col.right{text-align:right}
-.price-amount{font-size:28px;font-weight:900;color:#111;letter-spacing:-.5px;line-height:1}
-.price-label{font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;line-height:1.4;margin-top:3px}
-.promo-section{margin-top:10px;border-top:2px dashed #333;padding-top:10px}
-.promo-title{text-align:center;font-size:22px;font-weight:900;color:#111;text-transform:uppercase;letter-spacing:5px;margin-bottom:8px}
-.promo-row .price-amount{font-size:32px;font-weight:900;color:#000}
-.promo-row .price-label{font-size:12px;font-weight:800;color:#333}
-.label.has-promo .price-row:not(.promo-row){opacity:.45}
-.label.has-promo .price-row:not(.promo-row) .price-amount{font-size:15px;font-weight:500;text-decoration:line-through;color:#666}
-.label.has-promo .price-row:not(.promo-row) .price-label{font-size:9px;font-weight:400;color:#888}
+
+/* ESTILOS DE PRECIOS MEJORADOS CON GRID */
+.price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; width: 100%; }
+.price-col { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #f8fafc; padding: 10px 6px; border-radius: 8px; border: 1px solid #e2e8f0; }
+.price-amount { font-size: 24px; font-weight: 900; color: #111; letter-spacing: -0.5px; line-height: 1.1; word-break: break-word; }
+.price-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px; line-height: 1.2; }
+.promo-section { margin-top: 10px; border-top: 2px dashed #ccc; padding-top: 12px; }
+.promo-title { text-align: center; font-size: 18px; font-weight: 900; color: #e74c3c; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 10px; }
+.promo-row .price-col { background: #fff1f2; border-color: #fecdd3; }
+.promo-row .price-amount { font-size: 26px; color: #be123c; }
+.promo-row .price-label { font-size: 11px; font-weight: 800; color: #9f1239; }
+
+.label.has-promo .price-row:not(.promo-row){opacity:.55}
+.label.has-promo .price-row:not(.promo-row) .price-amount{font-size:16px;font-weight:600;text-decoration:line-through;color:#64748b}
+.label.has-promo .price-row:not(.promo-row) .price-label{font-size:9px;font-weight:500;color:#94a3b8}
 .label-spacer{flex:1}
 .label-specs{text-align:center;font-size:14px;font-weight:500;color:#555;letter-spacing:.3px;margin-bottom:14px}
 .label-brand{text-align:center}.label-brand img{height:30px}
@@ -226,7 +229,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 
 <main class="main">
 
-<!-- CONNECT -->
 <div class="v on" id="v-connect">
 <div class="cx">
   <img src="/comza-logo.svg" alt="COMZA" style="height:34px;margin-bottom:14px">
@@ -238,7 +240,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 </div>
 </div>
 
-<!-- PRODUCTS -->
 <div class="v" id="v-products">
 <div class="hd">
   <div><h1>Productos</h1><div class="sub">Sincronizado con Shopify</div></div>
@@ -261,27 +262,26 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 <div class="pg" id="grid"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
 </div>
 
-<!-- PRODUCT LABEL 4x6 -->
 <div class="v" id="v-label">
 <div class="hd">
   <div><h1>Etiqueta de Producto</h1><div class="sub">Formato 4×6 pulgadas para impresora térmica HP</div></div>
 </div>
 <div class="la">
   <div>
-    <!-- FIX 1: Buscador -->
-    <div class="srch" style="margin-bottom:6px">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="lQ" placeholder="Buscar por nombre o SKU..." oninput="filterLSel()">
-    </div>
     <div class="fg">
-      <label>Producto</label>
-      <select id="lSel" onchange="fillL()"><option value="">— Seleccionar —</option></select>
+      <label>Buscar / Seleccionar Producto</label>
+      <div class="srch" style="margin-bottom:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="lQ" list="lSelList" placeholder="Escribe el nombre o SKU para buscar..." oninput="fillLFromInput()" onchange="fillLFromInput()">
+      </div>
+      <datalist id="lSelList"></datalist>
+      <input type="hidden" id="lSel">
     </div>
+
     <div class="fg">
       <label>Nombre</label>
       <input type="text" id="lNm" placeholder="Horno Combi Rational SCC WE 202G" oninput="updL()">
     </div>
-    <!-- FIX 2: Condición desde Tags -->
     <div class="fg">
       <label>Condición <span class="info-pill">📌 Tag en Shopify</span></label>
       <select id="lCd" onchange="updL()">
@@ -300,7 +300,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
       <div class="fg"><label>Precio IVA Incluido</label><input type="text" id="lPI" placeholder="518,400" oninput="updL()"></div>
       <div class="fg"><label>Precio Efectivo</label><input type="text" id="lPC" placeholder="480,000" oninput="updL()"></div>
     </div>
-    <!-- FIX 3: Promo desde compare_at_price -->
     <div class="prb">
       <div class="prb-h">
         <span>🏷️ Promoción <span class="info-pill">📌 Compare at price</span></span>
@@ -313,7 +312,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
         </div>
       </div>
     </div>
-    <!-- FIX 4: Specs desde Descripción -->
     <div style="margin-top:8px;padding:10px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border2)">
       <div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">
         ⚡ Especificaciones <span class="info-pill">📌 Descripción en Shopify</span>
@@ -333,13 +331,13 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
         <div class="label-sku" id="L-sku">SKU:</div>
         <div class="price-row">
           <div class="price-col"><div class="price-amount" id="L-pi"></div><div class="price-label">IVA INCLUIDO</div></div>
-          <div class="price-col right"><div class="price-amount" id="L-pc"></div><div class="price-label">PAGO EN EFECTIVO</div></div>
+          <div class="price-col"><div class="price-amount" id="L-pc"></div><div class="price-label">PAGO EN EFECTIVO</div></div>
         </div>
         <div class="promo-section" id="L-prW" style="display:none">
           <div class="promo-title">PROMOCIÓN</div>
           <div class="price-row promo-row">
             <div class="price-col"><div class="price-amount" id="L-pri"></div><div class="price-label">IVA INCLUIDO</div></div>
-            <div class="price-col right"><div class="price-amount" id="L-prc"></div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
+            <div class="price-col"><div class="price-amount" id="L-prc"></div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
           </div>
         </div>
         <div class="label-spacer"></div>
@@ -355,7 +353,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 </div>
 </div>
 
-<!-- BATCH PRINT -->
 <div class="v" id="v-batch">
 <div class="hd">
   <div><h1>Imprimir en Lote</h1><div class="sub">Selecciona productos para imprimir múltiples etiquetas</div></div>
@@ -376,7 +373,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 </div>
 <div class="batch-labels" id="batchLabels"></div>
 
-<!-- REFACCIONES -->
 <div class="v" id="v-refacciones">
 <div class="hd">
   <div><h1>Inventario de Refacciones</h1><div class="sub">Alta, baja y préstamo de refacciones</div></div>
@@ -398,7 +394,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 </div>
 </div>
 
-<!-- REFACCION LABEL 3x1 -->
 <div class="v" id="v-ref-label">
 <div class="hd"><div><h1>Etiqueta de Refacción</h1><div class="sub">Formato 3×1 pulgadas con código QR</div></div></div>
 <div class="la">
@@ -423,7 +418,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 </div>
 </div>
 
-<!-- HERRAMIENTAS -->
 <div class="v" id="v-herramientas">
 <div class="hd">
   <div><h1>Inventario de Herramientas</h1><div class="sub">Alta, baja y préstamo de herramientas</div></div>
@@ -445,7 +439,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 </div>
 </div>
 
-<!-- SETTINGS -->
 <div class="v" id="v-settings">
 <div class="hd"><div><h1>Configuración</h1><div class="sub">Conexión y preferencias</div></div></div>
 <div class="sc"><h3>Conexión Shopify</h3><div class="desc">Estado de la tienda</div>
@@ -670,19 +663,30 @@ async function savP(id,vid){
 
 // ── LABEL FUNCTIONS ──────────────────────────────────
 
-// Populate dropdown
+// Populate datalist para el buscador inteligente
 function popSel(){
-  document.getElementById('lSel').innerHTML='<option value="">— Seleccionar —</option>'+
-    S.products.map(p=>`<option value="${p.id}">${p.sku?'['+p.sku+'] ':''}${p.title}</option>`).join('')}
+  document.getElementById('lSelList').innerHTML = S.products.map(p => 
+    `<option value="${p.sku ? '['+p.sku+'] ' : ''}${p.title}" data-id="${p.id}"></option>`
+  ).join('');
+}
 
-// FIX 1 — Buscador filtra el select en tiempo real
-function filterLSel(){
-  const q=document.getElementById('lQ').value.toLowerCase().trim();
-  document.getElementById('lSel').innerHTML='<option value="">— Seleccionar —</option>'+
-    S.products.filter(p=>!q||p.title.toLowerCase().includes(q)||(p.sku||'').toLowerCase().includes(q))
-    .map(p=>`<option value="${p.id}">${p.sku?'['+p.sku+'] ':''}${p.title}</option>`).join('')}
+// Lógica de autocompletado inteligente
+function fillLFromInput() {
+  const val = document.getElementById('lQ').value;
+  const opts = document.getElementById('lSelList').options;
+  let matchedId = null;
+  for (let i = 0; i < opts.length; i++) {
+    if (opts[i].value === val) {
+      matchedId = opts[i].getAttribute('data-id');
+      break;
+    }
+  }
+  if (matchedId) {
+    document.getElementById('lSel').value = matchedId;
+    fillL();
+  }
+}
 
-// FIX 2 — Condición desde Tags de Shopify
 function getCondFromTags(tags){
   const t=(tags||'').split(',').map(x=>x.trim().toLowerCase());
   if(t.includes('reacondicionado'))return'Reacondicionado';
@@ -691,12 +695,10 @@ function getCondFromTags(tags){
   if(t.includes('usado'))return'Usado';
   return'';}
 
-// FIX 4 — Extrae texto plano del HTML de descripción
 function stripHtml(html){
   const d=document.createElement('div');d.innerHTML=html;
   return(d.textContent||d.innerText||'').trim()}
 
-// fillL — carga todos los datos del producto seleccionado
 function fillL(){
   const id=parseInt(document.getElementById('lSel').value);if(!id)return;
   const p=S.products.find(x=>x.id===id);if(!p)return;
@@ -704,19 +706,15 @@ function fillL(){
   document.getElementById('lNm').value=p.title;
   document.getElementById('lSk').value=p.sku||'';
 
-  // FIX 2: condición desde tags
   document.getElementById('lCd').value=getCondFromTags(p.tags);
 
-  // FIX 3: precios - compare_at_price es el original (más alto), price es la oferta
   const price=parseFloat(p.price||0);
   const cap=parseFloat(p.compare_at_price||0);
   const hasPromo=cap>0&&cap>price;
 
   if(hasPromo){
-    // Fila principal = precio ORIGINAL (tachado)
     document.getElementById('lPI').value=fN(p.compare_at_price);
     document.getElementById('lPC').value=fN(Math.round(cap/1.16).toString());
-    // Sección PROMOCIÓN = precio de OFERTA
     document.getElementById('lHP').checked=true;togPr();
     document.getElementById('lPrI').value=fN(p.price);
     document.getElementById('lPrC').value=fN(Math.round(price/1.16).toString());
@@ -725,12 +723,17 @@ function fillL(){
     document.getElementById('lPC').value=fN(Math.round(price/1.16).toString());
     document.getElementById('lHP').checked=false;togPr();}
 
-  // FIX 4: specs desde descripción de Shopify
   document.getElementById('lSpTxt').value=stripHtml(p.body_html||'');
-
   updL();}
 
-function goL(id){go('label');setTimeout(()=>{document.getElementById('lSel').value=id;fillL()},80)}
+function goL(id){
+  go('label');
+  setTimeout(()=>{
+    const p = S.products.find(x => x.id === id);
+    if(p) document.getElementById('lQ').value = `${p.sku ? '['+p.sku+'] ' : ''}${p.title}`;
+    document.getElementById('lSel').value=id;
+    fillL()
+  },80)}
 function togPr(){document.getElementById('prF').style.display=document.getElementById('lHP').checked?'block':'none'}
 
 function updL(){
@@ -763,6 +766,12 @@ function updL(){
   const sp=document.getElementById('lSpTxt').value;
   const spEl=document.getElementById('L-sp');
   spEl.textContent=sp;spEl.style.display=sp?'block':'none';
+
+  // Ajuste automático de fuente para precios enormes
+  document.querySelectorAll('.price-amount').forEach(el => {
+    el.style.fontSize = el.textContent.length > 13 ? '18px' : el.textContent.length > 10 ? '21px' : '';
+  });
+
   setTimeout(scaleLabel,10);}
 
 function printL(){updL();window.print()}
@@ -1003,12 +1012,12 @@ function buildLabelHTML(p){
     <div class="label-sku" style="font-size:${sz}px">${esc(skuTxt)}</div>
     <div class="price-row">
       <div class="price-col"><div class="price-amount">$ ${mainIva} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
-      <div class="price-col right"><div class="price-amount">$${mainCash} MXN</div><div class="price-label">PAGO EN EFECTIVO</div></div>
+      <div class="price-col"><div class="price-amount">$${mainCash} MXN</div><div class="price-label">PAGO EN EFECTIVO</div></div>
     </div>
     ${hasPromo?`<div class="promo-section"><div class="promo-title">PROMOCIÓN</div>
       <div class="price-row promo-row">
         <div class="price-col"><div class="price-amount">$ ${fN(p.price)} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
-        <div class="price-col right"><div class="price-amount">$${fN(Math.round(price/1.16).toString())} MXN</div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
+        <div class="price-col"><div class="price-amount">$${fN(Math.round(price/1.16).toString())} MXN</div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
       </div></div>`:''}
     <div class="label-spacer"></div>
     ${specs?`<div class="label-specs">${esc(specs)}</div>`:''}
@@ -1019,6 +1028,12 @@ function printBatch(){
   if(batchSel.size===0){toast('Selecciona al menos un producto','err');return}
   const selected=S.products.filter(p=>batchSel.has(p.id));
   document.getElementById('batchLabels').innerHTML=selected.map(p=>buildLabelHTML(p)).join('');
+  
+  // Ajuste automático de tamaño para las de lote también
+  document.querySelectorAll('.batch-labels .price-amount').forEach(el => {
+    el.style.fontSize = el.textContent.length > 13 ? '18px' : el.textContent.length > 10 ? '21px' : '';
+  });
+
   toast(`Imprimiendo ${selected.length} etiquetas...`,'ok');
   setTimeout(()=>window.print(),300)}
 
@@ -1079,7 +1094,8 @@ function loadDemo(){
 // ── UTILS ─────────────────────────────────────────────
 function opPn(){document.getElementById('pan').classList.add('on');document.getElementById('panO').classList.add('on')}
 function clPn(){document.getElementById('pan').classList.remove('on');document.getElementById('panO').classList.remove('on')}
-function fN(s){return parseFloat(s||'0').toLocaleString('es-MX',{maximumFractionDigits:0})}
+// Bug de números arreglado aquí: remueve las comas antes de volver a parsear
+function fN(s){if(typeof s==='string')s=s.replace(/,/g,'');return parseFloat(s||'0').toLocaleString('es-MX',{maximumFractionDigits:0})}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function escA(s){return(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function toast(m,t='inf'){
