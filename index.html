@@ -102,7 +102,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(37,99,235,.06)}
 .lp-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t3)}
 .label-wrap{display:flex;justify-content:center}
-.label{background:#fff;width:384px;height:576px;padding:28px 26px 20px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.15);flex-shrink:0;border:1px solid #e0e0e0;box-sizing:border-box}
+.label{background:#fff;width:384px;height:576px;padding:28px 26px 20px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.15);flex-shrink:0;border:1px solid #e0e0e0;box-sizing:border-box;position:relative;}
 .label-name{font-size:16px;font-weight:700;color:#555;line-height:1.3;margin-bottom:10px;text-align:center}
 .label-sku{font-size:52px;font-weight:900;color:#333;line-height:1.05;margin-bottom:16px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word;text-align:center}
 
@@ -122,12 +122,16 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .label.has-promo .price-row:not(.promo-row) .price-label{font-size:9px;font-weight:500;color:#94a3b8}
 .label-spacer{flex:1}
 .label-specs{text-align:center;font-size:14px;font-weight:500;color:#555;letter-spacing:.3px;margin-bottom:14px}
-.label-brand{text-align:center}.label-brand img{height:30px}
+
+/* LOGO FIX */
+.label-brand{text-align:center;}
+.label-brand img{height:30px; object-fit:contain;}
 
 /* MODO ETIQUETA POR REPARAR GIGANTE HORIZONTAL */
-.label.is-repair { justify-content: center; align-items: center; padding: 0; }
-.label.is-repair > *:not(.label-sku) { display: none !important; }
-.label.is-repair .label-sku { display: block !important; transform: rotate(-90deg); margin: 0; color: #000; letter-spacing: 2px; }
+.label.is-repair { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; padding: 0 !important; }
+.label.is-repair > *:not(.label-sku):not(.label-brand) { display: none !important; }
+.label.is-repair .label-sku { display: block !important; transform: rotate(-90deg) !important; margin: 0 !important; color: #000 !important; letter-spacing: 2px !important; }
+.label.is-repair .label-brand { position: absolute !important; bottom: 20px !important; left: 0; right: 0; display: block !important; }
 
 .lbl-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .prb{background:var(--bg3);border:1px dashed var(--border2);border-radius:var(--r);padding:10px;margin-top:4px}
@@ -136,49 +140,66 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .chk{display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer;color:var(--t1)}.chk input{accent-color:var(--green);width:13px;height:13px}
 .batch-labels{display:none}
 
-/* === CORRECCIÓN DE IMPRESIÓN === */
+/* === CORRECCIÓN DEFINITIVA DE IMPRESIÓN (Mac/Safari) === */
 @media print {
   @page { margin: 0; size: 4in 6in; }
   
-  /* Ocultar interfaz gráfica completa cuando estamos en modo impresión especial */
-  body.is-printing-single > .shell,
-  body.is-printing-batch > .shell,
-  body.is-printing-ref > .shell,
-  .mob-nav, .tst-c, .po, .pn { 
-    display: none !important; 
-  }
-
-  body, html {
+  html, body {
     margin: 0 !important;
     padding: 0 !important;
     background: #fff !important;
+    width: 4in !important;
+    height: auto !important;
   }
-  
-  /* Forzar colores de fondo para que aparezcan las cajas de color (Safari/Chrome) */
+
+  /* Ocultamos de golpe TODO el diseño web (sin usar visibility hidden) */
+  body > .shell, 
+  body > .po, 
+  body > .pn, 
+  body > .tst-c, 
+  body > .mob-nav {
+    display: none !important;
+  }
+
+  /* Forzar colores de fondo para que aparezcan las cajas de color */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* 1. Etiqueta Única 4x6 */
+  /* 1. Etiqueta Única 4x6 clonada */
   #print-clone {
     display: flex !important;
+    flex-direction: column !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 4in !important;
     height: 6in !important;
     box-sizing: border-box !important;
     padding: 0.25in !important;
     margin: 0 !important;
     background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    zoom: 1 !important;
     page-break-after: avoid !important;
     page-break-inside: avoid !important;
   }
 
   /* 2. Lote de Etiquetas 4x6 */
-  #batchLabels {
+  .batch-labels {
     display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 100% !important;
+    margin: 0 !important;
   }
-  #batchLabels .label {
+  .batch-labels .label {
+    display: flex !important;
+    flex-direction: column !important;
     width: 4in !important;
     height: 6in !important;
     box-sizing: border-box !important;
@@ -186,21 +207,31 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
     margin: 0 !important;
     border: none !important;
     box-shadow: none !important;
+    transform: none !important;
+    zoom: 1 !important;
     page-break-after: always !important;
+    page-break-inside: avoid !important;
   }
-  #batchLabels .label:last-child { 
-    page-break-after: avoid !important; 
+  .batch-labels .label:last-child { 
+    page-break-after: auto !important; 
   }
 
-  /* 3. Refacción 3x1 */
+  /* 3. Refacción 3x1 clonada */
   #print-clone-ref {
     display: flex !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 3in !important;
     height: 1in !important;
     box-sizing: border-box !important;
     padding: 0.08in !important;
     margin: 0 !important;
     background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    zoom: 1 !important;
     page-break-after: avoid !important;
     page-break-inside: avoid !important;
   }
@@ -640,7 +671,6 @@ async function fetchProducts(){
   if(S.demo)return;
   document.getElementById('grid').innerHTML='<div class="loading"><div class="spinner"></div>Cargando...</div>';
   try{
-    // FIX: ?status=any para que Shopify mande Borradores y Archivados también
     const r=await fetch(API+'/api/products?status=any');const d=await r.json();
     if(d.error){toast(d.error,'err');return}
     S.products=d.products||[];
@@ -840,14 +870,11 @@ function updL(){
   const cd=document.getElementById('lCd').value;
   const isRepair = (cd === 'Por Reparar');
   
-  // Activar o desactivar modo gigante
   document.getElementById('lblP').classList.toggle('is-repair', isRepair);
-  
   document.getElementById('L-nm').textContent=cd?`${nm} (${cd})`:nm||'Nombre del Producto';
 
   const sku=document.getElementById('lSk').value;
   
-  // Si es para reparar, mostramos solo el SKU gigante, sin "SKU: "
   const skuTxt = isRepair ? (sku || 'S/N') : (sku ? `SKU: ${sku}`:'SKU:');
   const skuEl=document.getElementById('L-sku');
   skuEl.textContent=skuTxt;
@@ -885,27 +912,25 @@ function updL(){
 
   setTimeout(scaleLabel,10);}
 
-// FIX: Función de Imprimir rediseñada usando "Clonación" para evitar errores de Safari
+// NUEVA FUNCIÓN DE IMPRIMIR - Evita fallos de Mac/Safari
 function printL(){
   updL();
+  // Borramos intentos anteriores si quedaron pegados
+  document.querySelectorAll('.print-temp').forEach(e => e.remove());
+
   const original = document.getElementById('lblP');
   const clone = original.cloneNode(true);
   clone.id = 'print-clone';
-  // Quitamos cualquier rastro del zoom que la vista previa inserta
+  clone.className = original.className + ' print-temp';
+  
+  // Limpiamos cualquier zoom que se le haya aplicado en la vista web
   clone.style.zoom = '1';
   clone.style.transform = 'none';
-  clone.style.position = 'absolute';
-  clone.style.top = '0';
-  clone.style.left = '0';
-  
-  // Lo mandamos hasta arriba del body y ocultamos lo demás para forzar un lienzo en blanco
+
   document.body.appendChild(clone);
-  document.body.classList.add('is-printing-single');
-  
+
   setTimeout(() => {
     window.print();
-    // Limpiamos al terminar
-    document.body.classList.remove('is-printing-single');
     clone.remove();
   }, 150);
 }
@@ -1015,22 +1040,21 @@ function updRL(){
   new QRCode(qrDiv,{text:JSON.stringify({id:rid,nombre:nm,condicion:cd,empresa:'Grupo COMZA'}),
     width:76,height:76,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M})}
 
-// FIX: Función Imprimir clonada para Refacciones
 function printRL(){
   updRL();
+  document.querySelectorAll('.print-temp').forEach(e => e.remove());
+  
   const original = document.getElementById('lblR');
   const clone = original.cloneNode(true);
   clone.id = 'print-clone-ref';
-  clone.style.position = 'absolute';
-  clone.style.top = '0';
-  clone.style.left = '0';
-  
+  clone.className = original.className + ' print-temp';
+  clone.style.zoom = '1';
+  clone.style.transform = 'none';
+
   document.body.appendChild(clone);
-  document.body.classList.add('is-printing-ref');
 
   setTimeout(() => {
     window.print();
-    document.body.classList.remove('is-printing-ref');
     clone.remove();
   }, 150);
 }
@@ -1160,6 +1184,7 @@ function buildLabelHTML(p){
      const sz = l <= 5 ? 160 : l <= 8 ? 120 : 90;
      return`<div class="label is-repair">
        <div class="label-sku" style="font-size:${sz}px">${esc(rawSku)}</div>
+       <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
      </div>`;
   }
 
@@ -1189,7 +1214,6 @@ function buildLabelHTML(p){
     <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
   </div>`}
 
-// FIX: Función Imprimir en Lote rediseñada para Safari/Mac
 function printBatch(){
   if(batchSel.size===0){toast('Selecciona al menos un producto','err');return}
   const selected=S.products.filter(p=>batchSel.has(p.id));
@@ -1199,12 +1223,9 @@ function printBatch(){
     el.style.fontSize = el.textContent.length > 13 ? '18px' : el.textContent.length > 10 ? '21px' : '';
   });
 
-  document.body.classList.add('is-printing-batch');
   toast(`Imprimiendo ${selected.length} etiquetas...`,'ok');
-  
   setTimeout(()=>{
     window.print();
-    document.body.classList.remove('is-printing-batch');
   }, 200);
 }
 
