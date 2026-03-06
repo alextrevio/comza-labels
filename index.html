@@ -101,7 +101,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .la{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
 .lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(37,99,235,.06)}
 .lp-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t3)}
-.label-wrap{display:flex;justify-content:center}
+.label-wrap{display:flex;justify-content:center; align-items:flex-start;}
 .label{background:#fff;width:384px;height:576px;padding:28px 26px 20px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.15);flex-shrink:0;border:1px solid #e0e0e0;box-sizing:border-box;position:relative;}
 .label-name{font-size:16px;font-weight:700;color:#555;line-height:1.3;margin-bottom:10px;text-align:center}
 .label-sku{font-size:52px;font-weight:900;color:#333;line-height:1.05;margin-bottom:16px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word;text-align:center}
@@ -138,21 +138,25 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .prb-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .prb-h span{font-size:10px;font-weight:700;color:var(--amber)}
 .chk{display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer;color:var(--t1)}.chk input{accent-color:var(--green);width:13px;height:13px}
-.batch-labels{display:none}
 
-/* === CORRECCIÓN DEFINITIVA DE IMPRESIÓN (Mac/Safari) === */
+.lbl-sm{background:#fff;color:#111;width:288px;height:96px;padding:8px 10px;border-radius:1px;box-shadow:0 4px 12px rgba(0,0,0,.15);font-family:'Assistant',Arial,sans-serif;display:flex;align-items:center;gap:8px;border:1px solid #e0e0e0;box-sizing:border-box;position:relative;}
+.lbl-sm-qr{flex-shrink:0;width:76px;height:76px;display:flex;align-items:center;justify-content:center}
+.lbl-sm-qr canvas,.lbl-sm-qr img{max-width:76px!important;max-height:76px!important}
+.lbl-sm-info{flex:1;overflow:hidden}
+.lbl-sm-name{font-size:11px;font-weight:700;line-height:1.2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:#111}
+.lbl-sm-cond{font-size:9px;font-weight:600;color:#666;margin-top:2px}
+
+/* ====================================================
+   NUEVO CONTENEDOR DE IMPRESIÓN (AÍSLA LAS ETIQUETAS)
+   ==================================================== */
+#printContainer {
+  display: none;
+}
+
 @media print {
   @page { margin: 0; size: 4in 6in; }
   
-  html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #fff !important;
-    width: 4in !important;
-    height: auto !important;
-  }
-
-  /* Ocultamos de golpe TODO el diseño web (sin usar visibility hidden) */
+  /* Escondemos toda la interfaz web normal */
   body > .shell, 
   body > .po, 
   body > .pn, 
@@ -161,19 +165,27 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
     display: none !important;
   }
 
-  /* Forzar colores de fondo para que aparezcan las cajas de color */
-  * {
+  body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* 1. Etiqueta Única 4x6 clonada */
-  #print-clone {
-    display: flex !important;
-    flex-direction: column !important;
+  /* Mostramos SOLO el contenedor de impresión */
+  #printContainer {
+    display: block !important;
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Etiquetas tamaño 4x6 */
+  .print-label {
     width: 4in !important;
     height: 6in !important;
     box-sizing: border-box !important;
@@ -182,46 +194,19 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
     background: white !important;
     border: none !important;
     box-shadow: none !important;
-    transform: none !important;
-    zoom: 1 !important;
-    page-break-after: avoid !important;
-    page-break-inside: avoid !important;
-  }
-
-  /* 2. Lote de Etiquetas 4x6 */
-  .batch-labels {
-    display: block !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    margin: 0 !important;
-  }
-  .batch-labels .label {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 4in !important;
-    height: 6in !important;
-    box-sizing: border-box !important;
-    padding: 0.25in !important;
-    margin: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    transform: none !important;
-    zoom: 1 !important;
+    transform: none !important; /* IMPORTANTE PARA MAC/SAFARI */
+    zoom: 1 !important; /* IMPORTANTE PARA MAC/SAFARI */
     page-break-after: always !important;
     page-break-inside: avoid !important;
+    display: flex !important; 
+    flex-direction: column !important;
   }
-  .batch-labels .label:last-child { 
-    page-break-after: auto !important; 
+  .print-label:last-child {
+    page-break-after: avoid !important;
   }
 
-  /* 3. Refacción 3x1 clonada */
-  #print-clone-ref {
-    display: flex !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+  /* Etiquetas Refacción 3x1 */
+  .print-ref {
     width: 3in !important;
     height: 1in !important;
     box-sizing: border-box !important;
@@ -234,15 +219,10 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
     zoom: 1 !important;
     page-break-after: avoid !important;
     page-break-inside: avoid !important;
+    display: flex !important;
   }
 }
 
-.lbl-sm{background:#fff;color:#111;width:288px;height:96px;padding:8px 10px;border-radius:1px;box-shadow:0 4px 12px rgba(0,0,0,.15);font-family:'Assistant',Arial,sans-serif;display:flex;align-items:center;gap:8px;border:1px solid #e0e0e0;box-sizing:border-box}
-.lbl-sm-qr{flex-shrink:0;width:76px;height:76px;display:flex;align-items:center;justify-content:center}
-.lbl-sm-qr canvas,.lbl-sm-qr img{max-width:76px!important;max-height:76px!important}
-.lbl-sm-info{flex:1;overflow:hidden}
-.lbl-sm-name{font-size:11px;font-weight:700;line-height:1.2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:#111}
-.lbl-sm-cond{font-size:9px;font-weight:600;color:#666;margin-top:2px}
 .rtbl{width:100%;border-collapse:collapse;font-size:11.5px}
 .rtbl th{text-align:left;padding:8px 10px;background:var(--bg3);color:var(--t3);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;border-bottom:1px solid var(--border);position:sticky;top:0}
 .rtbl td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--t1);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -280,6 +260,9 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 </style>
 </head>
 <body>
+
+<div id="printContainer"></div>
+
 <div class="shell">
 <aside class="sb">
   <div class="sb-brand">
@@ -474,7 +457,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 <div id="batchList" style="display:flex;flex-direction:column;gap:4px;max-height:50vh;overflow-y:auto"></div>
 <div style="margin-top:14px"><button class="btn btn-g btn-w" onclick="printBatch()">🖨️ Imprimir Seleccionados</button></div>
 </div>
-<div class="batch-labels" id="batchLabels"></div>
 
 <div class="v" id="v-refacciones">
 <div class="hd">
@@ -912,27 +894,133 @@ function updL(){
 
   setTimeout(scaleLabel,10);}
 
-// NUEVA FUNCIÓN DE IMPRIMIR - Evita fallos de Mac/Safari
+/* =========================================
+   NUEVA FUNCIÓN DE IMPRESIÓN AISLADA
+========================================= */
 function printL(){
   updL();
-  // Borramos intentos anteriores si quedaron pegados
-  document.querySelectorAll('.print-temp').forEach(e => e.remove());
-
-  const original = document.getElementById('lblP');
-  const clone = original.cloneNode(true);
-  clone.id = 'print-clone';
-  clone.className = original.className + ' print-temp';
+  const pc = document.getElementById('printContainer');
+  pc.innerHTML = ''; // Limpiar anteriores
   
-  // Limpiamos cualquier zoom que se le haya aplicado en la vista web
-  clone.style.zoom = '1';
-  clone.style.transform = 'none';
+  const clone = document.getElementById('lblP').cloneNode(true);
+  // Re-asignamos las clases correctas
+  const isRepair = document.getElementById('lblP').classList.contains('is-repair');
+  clone.className = 'label print-label' + (isRepair ? ' is-repair' : '');
+  clone.id = '';
+  
+  pc.appendChild(clone);
+  window.print();
+}
 
-  document.body.appendChild(clone);
+/* =========================================
+   NUEVA FUNCIÓN DE DESCARGA PNG AISLADA
+========================================= */
+async function dlPNG(elId, prefix){
+  try {
+    const el = document.getElementById(elId);
+    // Guardamos el zoom y transform actuales
+    const origZoom = el.style.zoom;
+    
+    // Apagamos el zoom temporalmente para que html2canvas no se confunda
+    el.style.zoom = '1';
+    
+    // Esperamos un momento para que el navegador procese el tamaño real
+    await new Promise(r => setTimeout(r, 50));
+    
+    const c = await html2canvas(el, {
+      scale: 3, 
+      backgroundColor: '#fff',
+      useCORS: true,
+      logging: false
+    });
+    
+    // Devolvemos el zoom como estaba
+    el.style.zoom = origZoom;
+    
+    const a = document.createElement('a');
+    a.download = `${prefix}-${Date.now()}.png`;
+    a.href = c.toDataURL('image/png');
+    a.click();
+    toast('PNG descargado', 'ok');
+  } catch(e) {
+    console.error(e);
+    toast('Error al generar PNG', 'err');
+  }
+}
 
-  setTimeout(() => {
-    window.print();
-    clone.remove();
-  }, 150);
+// ── BATCH PRINT ──────────────────────────────────────
+let batchSel=new Set();
+function renderBatch(){
+  document.getElementById('batchList').innerHTML=S.products.map(p=>`<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer">
+    <input type="checkbox" class="bchk" data-id="${p.id}" ${batchSel.has(p.id)?'checked':''} onchange="batchToggle(${p.id},this.checked)" style="width:18px;height:18px;accent-color:var(--green)">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t1)">${esc(p.title)}</div>
+      <div style="font-size:10px;color:var(--t3)">SKU: <span style="font-family:var(--mono);font-weight:700;color:var(--green)">${p.sku||'—'}</span> · $${fN(p.price)}</div>
+    </div></label>`).join('');
+  updBatchCount()}
+
+function filterBatch(){const q=document.getElementById('bQ').value.toLowerCase();
+  document.querySelectorAll('#batchList label').forEach(l=>l.style.display=l.textContent.toLowerCase().includes(q)?'flex':'none')}
+function batchToggle(id,on){if(on)batchSel.add(id);else batchSel.delete(id);updBatchCount()}
+function batchSelectAll(){document.querySelectorAll('.bchk').forEach(c=>{if(c.parentElement.style.display!=='none'){c.checked=true;batchSel.add(parseInt(c.dataset.id))}});updBatchCount()}
+function batchSelectNone(){batchSel.clear();document.querySelectorAll('.bchk').forEach(c=>c.checked=false);updBatchCount()}
+function batchSelectWithSKU(){batchSel.clear();S.products.forEach(p=>{if(p.sku)batchSel.add(p.id)});document.querySelectorAll('.bchk').forEach(c=>c.checked=batchSel.has(parseInt(c.dataset.id)));updBatchCount()}
+function updBatchCount(){document.getElementById('batchCount').textContent=batchSel.size+' seleccionados'}
+
+function buildLabelHTML(p){
+  const cond=getCondFromTags(p.tags);
+  const isRepair = (cond === 'Por Reparar');
+  const sku=p.sku||'';
+
+  if(isRepair){
+     const rawSku = sku || 'S/N';
+     const l = rawSku.length;
+     const sz = l <= 5 ? 160 : l <= 8 ? 120 : 90;
+     return`<div class="label print-label is-repair">
+       <div class="label-sku" style="font-size:${sz}px">${esc(rawSku)}</div>
+       <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
+     </div>`;
+  }
+
+  const skuTxt=sku?`SKU: ${sku}`:'';
+  const sz=skuTxt.length<=10?52:skuTxt.length<=15?40:skuTxt.length<=20?32:26;
+  const price=parseFloat(p.price||0);const cap=parseFloat(p.compare_at_price||0);
+  const hasPromo=cap>0&&cap>price;
+  const displayName=cond?`${p.title} (${cond})`:p.title;
+  const mainIva=fN(hasPromo?p.compare_at_price:p.price);
+  const mainCash=fN(Math.round((hasPromo?cap:price)/1.16).toString());
+  const specs=stripHtml(p.body_html||'');
+  
+  return`<div class="label print-label${hasPromo?' has-promo':''}">
+    <div class="label-name">${esc(displayName)}</div>
+    <div class="label-sku" style="font-size:${sz}px">${esc(skuTxt)}</div>
+    <div class="price-row">
+      <div class="price-col"><div class="price-amount">$ ${mainIva} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
+      <div class="price-col"><div class="price-amount">$${mainCash} MXN</div><div class="price-label">PAGO EN EFECTIVO</div></div>
+    </div>
+    ${hasPromo?`<div class="promo-section"><div class="promo-title">PROMOCIÓN</div>
+      <div class="price-row promo-row">
+        <div class="price-col"><div class="price-amount">$ ${fN(p.price)} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
+        <div class="price-col"><div class="price-amount">$${fN(Math.round(price/1.16).toString())} MXN</div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
+      </div></div>`:''}
+    <div class="label-spacer"></div>
+    ${specs?`<div class="label-specs">${esc(specs)}</div>`:''}
+    <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
+  </div>`}
+
+function printBatch(){
+  if(batchSel.size===0){toast('Selecciona al menos un producto','err');return}
+  const selected=S.products.filter(p=>batchSel.has(p.id));
+  
+  const pc = document.getElementById('printContainer');
+  pc.innerHTML = selected.map(p=>buildLabelHTML(p)).join('');
+  
+  pc.querySelectorAll('.price-amount').forEach(el => {
+    el.style.fontSize = el.textContent.length > 13 ? '18px' : el.textContent.length > 10 ? '21px' : '';
+  });
+
+  toast(`Imprimiendo ${selected.length} etiquetas...`,'ok');
+  setTimeout(()=>{ window.print(); }, 200);
 }
 
 // ── REFACCIONES ──────────────────────────────────────
@@ -1042,21 +1130,13 @@ function updRL(){
 
 function printRL(){
   updRL();
-  document.querySelectorAll('.print-temp').forEach(e => e.remove());
-  
-  const original = document.getElementById('lblR');
-  const clone = original.cloneNode(true);
-  clone.id = 'print-clone-ref';
-  clone.className = original.className + ' print-temp';
-  clone.style.zoom = '1';
-  clone.style.transform = 'none';
-
-  document.body.appendChild(clone);
-
-  setTimeout(() => {
-    window.print();
-    clone.remove();
-  }, 150);
+  const pc = document.getElementById('printContainer');
+  pc.innerHTML = ''; 
+  const clone = document.getElementById('lblR').cloneNode(true);
+  clone.className = 'lbl-sm print-ref';
+  clone.id = '';
+  pc.appendChild(clone);
+  window.print();
 }
 
 // ── HERRAMIENTAS ─────────────────────────────────────
@@ -1147,87 +1227,6 @@ async function exportRef(){const all=await dbGetAll();const b=new Blob([JSON.str
 async function importRef(e){const f=e.target.files[0];if(!f)return;const t=await f.text();try{const arr=JSON.parse(t);for(const r of arr){delete r.id;await dbAdd(r)}toast(`${arr.length} importadas ✓`,'ok');renderRefs()}catch{toast('Error en archivo','err')}}
 async function exportHerr(){const all=await hGetAll();const b=new Blob([JSON.stringify(all,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='comza-herramientas-'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Exportado ✓','ok')}
 async function importHerr(e){const f=e.target.files[0];if(!f)return;const t=await f.text();try{const arr=JSON.parse(t);for(const h of arr){delete h.id;await hAdd(h)}toast(`${arr.length} importadas ✓`,'ok');renderHerr()}catch{toast('Error en archivo','err')}}
-
-// ── PNG DOWNLOAD ─────────────────────────────────────
-async function dlPNG(elId,prefix){
-  try{const c=await html2canvas(document.getElementById(elId),{scale:3,backgroundColor:'#fff'});
-    const a=document.createElement('a');a.download=`${prefix}-${Date.now()}.png`;a.href=c.toDataURL('image/png');a.click();toast('PNG descargado','ok')}
-  catch{toast('Error al generar PNG','err')}}
-
-// ── BATCH PRINT ──────────────────────────────────────
-let batchSel=new Set();
-function renderBatch(){
-  document.getElementById('batchList').innerHTML=S.products.map(p=>`<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer">
-    <input type="checkbox" class="bchk" data-id="${p.id}" ${batchSel.has(p.id)?'checked':''} onchange="batchToggle(${p.id},this.checked)" style="width:18px;height:18px;accent-color:var(--green)">
-    <div style="flex:1;min-width:0">
-      <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t1)">${esc(p.title)}</div>
-      <div style="font-size:10px;color:var(--t3)">SKU: <span style="font-family:var(--mono);font-weight:700;color:var(--green)">${p.sku||'—'}</span> · $${fN(p.price)}</div>
-    </div></label>`).join('');
-  updBatchCount()}
-
-function filterBatch(){const q=document.getElementById('bQ').value.toLowerCase();
-  document.querySelectorAll('#batchList label').forEach(l=>l.style.display=l.textContent.toLowerCase().includes(q)?'flex':'none')}
-function batchToggle(id,on){if(on)batchSel.add(id);else batchSel.delete(id);updBatchCount()}
-function batchSelectAll(){document.querySelectorAll('.bchk').forEach(c=>{if(c.parentElement.style.display!=='none'){c.checked=true;batchSel.add(parseInt(c.dataset.id))}});updBatchCount()}
-function batchSelectNone(){batchSel.clear();document.querySelectorAll('.bchk').forEach(c=>c.checked=false);updBatchCount()}
-function batchSelectWithSKU(){batchSel.clear();S.products.forEach(p=>{if(p.sku)batchSel.add(p.id)});document.querySelectorAll('.bchk').forEach(c=>c.checked=batchSel.has(parseInt(c.dataset.id)));updBatchCount()}
-function updBatchCount(){document.getElementById('batchCount').textContent=batchSel.size+' seleccionados'}
-
-function buildLabelHTML(p){
-  const cond=getCondFromTags(p.tags);
-  const isRepair = (cond === 'Por Reparar');
-  const sku=p.sku||'';
-
-  if(isRepair){
-     const rawSku = sku || 'S/N';
-     const l = rawSku.length;
-     const sz = l <= 5 ? 160 : l <= 8 ? 120 : 90;
-     return`<div class="label is-repair">
-       <div class="label-sku" style="font-size:${sz}px">${esc(rawSku)}</div>
-       <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
-     </div>`;
-  }
-
-  const skuTxt=sku?`SKU: ${sku}`:'';
-  const sz=skuTxt.length<=10?52:skuTxt.length<=15?40:skuTxt.length<=20?32:26;
-  const price=parseFloat(p.price||0);const cap=parseFloat(p.compare_at_price||0);
-  const hasPromo=cap>0&&cap>price;
-  const displayName=cond?`${p.title} (${cond})`:p.title;
-  const mainIva=fN(hasPromo?p.compare_at_price:p.price);
-  const mainCash=fN(Math.round((hasPromo?cap:price)/1.16).toString());
-  const specs=stripHtml(p.body_html||'');
-  
-  return`<div class="label${hasPromo?' has-promo':''}">
-    <div class="label-name">${esc(displayName)}</div>
-    <div class="label-sku" style="font-size:${sz}px">${esc(skuTxt)}</div>
-    <div class="price-row">
-      <div class="price-col"><div class="price-amount">$ ${mainIva} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
-      <div class="price-col"><div class="price-amount">$${mainCash} MXN</div><div class="price-label">PAGO EN EFECTIVO</div></div>
-    </div>
-    ${hasPromo?`<div class="promo-section"><div class="promo-title">PROMOCIÓN</div>
-      <div class="price-row promo-row">
-        <div class="price-col"><div class="price-amount">$ ${fN(p.price)} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
-        <div class="price-col"><div class="price-amount">$${fN(Math.round(price/1.16).toString())} MXN</div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
-      </div></div>`:''}
-    <div class="label-spacer"></div>
-    ${specs?`<div class="label-specs">${esc(specs)}</div>`:''}
-    <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
-  </div>`}
-
-function printBatch(){
-  if(batchSel.size===0){toast('Selecciona al menos un producto','err');return}
-  const selected=S.products.filter(p=>batchSel.has(p.id));
-  document.getElementById('batchLabels').innerHTML=selected.map(p=>buildLabelHTML(p)).join('');
-  
-  document.querySelectorAll('.batch-labels .price-amount').forEach(el => {
-    el.style.fontSize = el.textContent.length > 13 ? '18px' : el.textContent.length > 10 ? '21px' : '';
-  });
-
-  toast(`Imprimiendo ${selected.length} etiquetas...`,'ok');
-  setTimeout(()=>{
-    window.print();
-  }, 200);
-}
 
 // ── NEW PRODUCT ──────────────────────────────────────
 function opNewProd(){
