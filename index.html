@@ -121,7 +121,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .label.has-promo .price-row:not(.promo-row) .price-amount{font-size:16px;font-weight:600;text-decoration:line-through;color:#64748b}
 .label.has-promo .price-row:not(.promo-row) .price-label{font-size:9px;font-weight:500;color:#94a3b8}
 .label-spacer{flex:1}
-.label-specs{text-align:center;font-size:14px;font-weight:500;color:#555;letter-spacing:.3px;margin-bottom:14px}
+.label-specs{text-align:center;font-size:14px;font-weight:600;color:#555;letter-spacing:.3px;margin-bottom:14px; padding:0 10px;}
 
 /* LOGO FIX */
 .label-brand{text-align:center;}
@@ -398,13 +398,15 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
         </div>
       </div>
     </div>
+    
     <div style="margin-top:8px;padding:10px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border2)">
-      <div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:3px;text-transform:uppercase;letter-spacing:1px">
-        ⚡ Especificaciones <span class="info-pill">📌 Descripción en Shopify</span>
+      <div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">
+        ⚡ Especificaciones <span class="info-pill">📌 Metacampos Shopify</span>
       </div>
-      <div style="font-size:10px;color:var(--t4);margin-bottom:8px;line-height:1.4">Se toman del campo <strong style="color:var(--t3)">Descripción</strong> del producto. Puedes editarlas aquí.</div>
-      <div class="fg" style="margin:0">
-        <input type="text" id="lSpTxt" placeholder="220v / 1 ph / 20 Charolas / Gas LP" oninput="updL()">
+      <div class="fg-row3" style="margin:0">
+        <div class="fg" style="margin:0"><label>Voltaje</label><input type="text" id="lVolt" placeholder="220V" oninput="updL()"></div>
+        <div class="fg" style="margin:0"><label>Capacidad</label><input type="text" id="lCap" placeholder="20 Charolas" oninput="updL()"></div>
+        <div class="fg" style="margin:0"><label>Tipo de Gas</label><input type="text" id="lGas" placeholder="Gas LP" oninput="updL()"></div>
       </div>
     </div>
   </div>
@@ -549,9 +551,13 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
       </div>
     </div>
     <div style="padding:10px;background:var(--bg3);border-radius:var(--r);border-left:3px solid var(--amber)">
-      <div style="font-weight:700;color:var(--t1);margin-bottom:4px">② Especificaciones técnicas → campo Descripción</div>
-      <div style="color:var(--t2);line-height:1.6">Escribe las specs en texto plano en la descripción del producto:<br>
-        <span style="font-family:var(--mono);background:var(--bg2);padding:1px 6px;border-radius:4px;border:1px solid var(--border)">220v / 1 ph / 20 Charolas / Gas LP</span>
+      <div style="font-weight:700;color:var(--t1);margin-bottom:4px">② Especificaciones técnicas → Metacampos</div>
+      <div style="color:var(--t2);line-height:1.6">Asegúrate de llenar la información en el panel del producto de Shopify dentro de la sección "Metacampos":
+        <ul style="margin-left: 15px; margin-top: 5px;">
+          <li><b>Voltaje</b> (Ej. 220V)</li>
+          <li><b>Capacidad</b> (Ej. 20 Litros)</li>
+          <li><b>Tipo de Gas</b> (Ej. Gas LP)</li>
+        </ul>
       </div>
     </div>
     <div style="padding:10px;background:var(--bg3);border-radius:var(--r);border-left:3px solid var(--blue)">
@@ -708,6 +714,33 @@ function filterP(){
   renderP(filtered);
 }
 
+// ── UTILS PARA METACAMPOS ────────────────────────────
+function getMeta(p, key) {
+  // Maneja tanto la estructura de la API normal (metafields.custom) como un nivel plano
+  if (!p) return '';
+  if (p.metafields && p.metafields.custom && p.metafields.custom[key]) return p.metafields.custom[key];
+  if (p.metafields && p.metafields[key]) return p.metafields[key];
+  if (p[key]) return p[key];
+  return '';
+}
+
+function formatSpecs(v, c, g) {
+  let arr = [];
+  
+  if(v && v.toUpperCase() !== 'N/A') {
+    // Para voltaje, quitamos la palabra "voltaje" (no case sensitive) y dejamos solo el valor
+    arr.push(v.replace(/voltaje/gi, '').trim());
+  }
+  if(c && c.toUpperCase() !== 'N/A') {
+    arr.push(`Capacidad: ${c}`);
+  }
+  if(g && g.toUpperCase() !== 'N/A') {
+    arr.push(`Tipo de Gas: ${g}`);
+  }
+  
+  return arr.join(' • ');
+}
+
 function opEd(id){
   const p=S.products.find(x=>x.id===id);if(!p)return;
   const meta=JSON.parse(localStorage.getItem('comza_meta_'+id)||'{}');
@@ -728,11 +761,14 @@ function opEd(id){
       <div class="fg"><label>Tags <span style="color:var(--amber);font-weight:400">(condición aquí)</span></label>
         <input type="text" id="eG" value="${escA(p.tags)}" placeholder="Reacondicionado, ..."></div>
     </div>
-    <div class="fg"><label>Descripción <span style="color:var(--amber);font-weight:400">(specs técnicas aquí)</span></label>
-      <textarea id="eBH" placeholder="220v / 1 ph / 20 Charolas / Gas LP">${escA(stripHtml(p.body_html||''))}</textarea>
-    </div>
+    
     <div style="margin-top:10px;padding:12px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border2)">
-      <div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">📋 Datos Internos COMZA</div>
+      <div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">📋 Metacampos y Datos COMZA</div>
+      <div class="fg-row3">
+        <div class="fg"><label>Voltaje</label><input type="text" id="mVol" value="${escA(getMeta(p, 'voltaje'))}"></div>
+        <div class="fg"><label>Capacidad</label><input type="text" id="mCap" value="${escA(getMeta(p, 'capacidad'))}"></div>
+        <div class="fg"><label>Tipo de Gas</label><input type="text" id="mGas" value="${escA(getMeta(p, 'tipo_de_gas'))}"></div>
+      </div>
       <div class="fg-row">
         <div class="fg"><label>Fecha de Compra</label><input type="date" id="mFc" value="${escA(meta.fecha_compra||'')}"></div>
         <div class="fg"><label>Lugar de Compra</label><input type="text" id="mLc" value="${escA(meta.lugar_compra||'')}"></div>
@@ -756,12 +792,26 @@ async function savP(id,vid){
   const u={title:document.getElementById('eT').value,sku:document.getElementById('eS').value,
     product_type:document.getElementById('eY').value,price:document.getElementById('eP').value,
     compare_at_price:document.getElementById('eC').value||null,vendor:document.getElementById('eV').value,
-    tags:document.getElementById('eG').value,body_html:document.getElementById('eBH').value};
-  const metafields={fecha_compra:document.getElementById('mFc').value,lugar_compra:document.getElementById('mLc').value,
-    pedimento:document.getElementById('mPd').value,costo_adquisicion:document.getElementById('mCa').value,
-    gasto_reparacion:document.getElementById('mGr').value};
+    tags:document.getElementById('eG').value};
+  const metafields={
+    fecha_compra:document.getElementById('mFc').value,
+    lugar_compra:document.getElementById('mLc').value,
+    pedimento:document.getElementById('mPd').value,
+    costo_adquisicion:document.getElementById('mCa').value,
+    gasto_reparacion:document.getElementById('mGr').value,
+    custom: {
+      voltaje: document.getElementById('mVol').value,
+      capacidad: document.getElementById('mCap').value,
+      tipo_de_gas: document.getElementById('mGas').value
+    }
+  };
   localStorage.setItem('comza_meta_'+id,JSON.stringify(metafields));
-  const i=S.products.findIndex(p=>p.id===id);if(i>=0)S.products[i]={...S.products[i],...u};
+  const i=S.products.findIndex(p=>p.id===id);
+  if(i>=0){
+    S.products[i]={...S.products[i],...u};
+    S.products[i].metafields = metafields; // Sincronización visual
+  }
+  
   if(!S.demo){try{
     const r=await fetch(API+`/api/products/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({...u,variants:[{id:vid,sku:u.sku,price:u.price,compare_at_price:u.compare_at_price}],metafields})});
@@ -806,10 +856,6 @@ function getCondFromTags(tags){
   if(t.includes('por reparar'))return'Por Reparar';
   return'';}
 
-function stripHtml(html){
-  const d=document.createElement('div');d.innerHTML=html;
-  return(d.textContent||d.innerText||'').trim()}
-
 function fillL(){
   const id=parseInt(document.getElementById('lSel').value);if(!id)return;
   const p=S.products.find(x=>x.id===id);if(!p)return;
@@ -834,7 +880,11 @@ function fillL(){
     document.getElementById('lPC').value=fN(Math.round(price/1.16).toString());
     document.getElementById('lHP').checked=false;togPr();}
 
-  document.getElementById('lSpTxt').value=stripHtml(p.body_html||'');
+  // Cargar info técnica de los metacampos
+  document.getElementById('lVolt').value = getMeta(p, 'voltaje');
+  document.getElementById('lCap').value = getMeta(p, 'capacidad');
+  document.getElementById('lGas').value = getMeta(p, 'tipo_de_gas');
+
   updL();}
 
 function goL(id){
@@ -884,9 +934,16 @@ function updL(){
     document.getElementById('L-pri').textContent=priV?`$ ${priV} MXN`:'';
     document.getElementById('L-prc').textContent=prcV?`$${prcV} MXN`:'';}
 
-  const sp=document.getElementById('lSpTxt').value;
-  const spEl=document.getElementById('L-sp');
-  spEl.textContent=sp;spEl.style.display=sp?'block':'none';
+  // Generar cadena de Especificaciones en la Etiqueta
+  const v = document.getElementById('lVolt').value;
+  const c = document.getElementById('lCap').value;
+  const g = document.getElementById('lGas').value;
+  
+  const spStr = formatSpecs(v, c, g);
+  const spEl = document.getElementById('L-sp');
+  
+  spEl.textContent = spStr;
+  spEl.style.display = spStr ? 'block' : 'none';
 
   document.querySelectorAll('.price-amount').forEach(el => {
     el.style.fontSize = el.textContent.length > 13 ? '18px' : el.textContent.length > 10 ? '21px' : '';
@@ -903,7 +960,6 @@ function printL(){
   pc.innerHTML = ''; // Limpiar anteriores
   
   const clone = document.getElementById('lblP').cloneNode(true);
-  // Re-asignamos las clases correctas
   const isRepair = document.getElementById('lblP').classList.contains('is-repair');
   clone.className = 'label print-label' + (isRepair ? ' is-repair' : '');
   clone.id = '';
@@ -918,13 +974,8 @@ function printL(){
 async function dlPNG(elId, prefix){
   try {
     const el = document.getElementById(elId);
-    // Guardamos el zoom y transform actuales
     const origZoom = el.style.zoom;
-    
-    // Apagamos el zoom temporalmente para que html2canvas no se confunda
     el.style.zoom = '1';
-    
-    // Esperamos un momento para que el navegador procese el tamaño real
     await new Promise(r => setTimeout(r, 50));
     
     const c = await html2canvas(el, {
@@ -934,7 +985,6 @@ async function dlPNG(elId, prefix){
       logging: false
     });
     
-    // Devolvemos el zoom como estaba
     el.style.zoom = origZoom;
     
     const a = document.createElement('a');
@@ -989,7 +1039,12 @@ function buildLabelHTML(p){
   const displayName=cond?`${p.title} (${cond})`:p.title;
   const mainIva=fN(hasPromo?p.compare_at_price:p.price);
   const mainCash=fN(Math.round((hasPromo?cap:price)/1.16).toString());
-  const specs=stripHtml(p.body_html||'');
+  
+  // Extraer Specs desde metacampos (Batch)
+  const v = getMeta(p, 'voltaje').toString();
+  const c = getMeta(p, 'capacidad').toString();
+  const g = getMeta(p, 'tipo_de_gas').toString();
+  const specs = formatSpecs(v, c, g);
   
   return`<div class="label print-label${hasPromo?' has-promo':''}">
     <div class="label-name">${esc(displayName)}</div>
@@ -1129,7 +1184,7 @@ function updRL(){
     width:76,height:76,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M})}
 
 function printRL(){
-  updRL();
+  updL();
   const pc = document.getElementById('printContainer');
   pc.innerHTML = ''; 
   const clone = document.getElementById('lblR').cloneNode(true);
@@ -1244,8 +1299,6 @@ function opNewProd(){
     <div class="fg"><label>Marca</label><input type="text" id="npV" placeholder="Rational"></div>
     <div class="fg"><label>Tags <span style="color:var(--amber);font-weight:400">(condición: Reacondicionado, Nuevo...)</span></label>
       <input type="text" id="npG" placeholder="Reacondicionado"></div>
-    <div class="fg"><label>Descripción <span style="color:var(--amber);font-weight:400">(specs: 220v / 1ph / Gas LP)</span></label>
-      <textarea id="npBH" placeholder="220v / 1 ph / 20 Charolas / Gas LP"></textarea></div>
     <div class="pn-act"><button class="btn btn-o" onclick="clPn()">Cancelar</button><button class="btn btn-g" onclick="createProd()">Crear en Shopify</button></div>`;
   opPn()}
 
@@ -1253,11 +1306,11 @@ async function createProd(){
   const d={title:document.getElementById('npT').value,sku:document.getElementById('npS').value,
     product_type:document.getElementById('npY').value,price:document.getElementById('npP').value||'0',
     compare_at_price:document.getElementById('npC').value||null,vendor:document.getElementById('npV').value,
-    tags:document.getElementById('npG').value,body_html:document.getElementById('npBH').value};
+    tags:document.getElementById('npG').value};
   if(!d.title){toast('Nombre requerido','err');return}
   if(S.demo){
     S.products.push({id:Date.now(),title:d.title,sku:d.sku,price:d.price,compare_at_price:d.compare_at_price,
-      vendor:d.vendor,product_type:d.product_type,tags:d.tags,body_html:d.body_html,
+      vendor:d.vendor,product_type:d.product_type,tags:d.tags,
       inventory_quantity:0,image:null,variant_id:Date.now()+1,status:'active'});
     populateFilters();
     renderP(S.products);clPn();toast('Producto creado (demo)','ok');return}
@@ -1272,18 +1325,15 @@ async function createProd(){
 function loadDemo(){
   S.connected=true;S.demo=true;S.store='grupocomza.com';S.company='COMZA';
   S.products=[
-    {id:1,title:'Horno Combi Rational SCC WE 202G',body_html:'220v / 1 ph / 20 Charolas / Gas LP',
+    {id:1,title:'Horno Combi Rational SCC WE 202G',metafields:{custom:{voltaje:'220V',capacidad:'20 Charolas',tipo_de_gas:'Gas LP'}},
       vendor:'Rational',product_type:'Hornos',tags:'Reacondicionado',sku:'E258',
       price:'473000.00',compare_at_price:'518400.00',inventory_quantity:2,image:null,variant_id:101,status:'active'},
-    {id:2,title:'Refrigerador Industrial True T-49',body_html:'110v / 1 ph / 49 cu.ft.',
+    {id:2,title:'Refrigerador Industrial True T-49',metafields:{custom:{voltaje:'110V',capacidad:'49 pies cúbicos',tipo_de_gas:'N/A'}},
       vendor:'True',product_type:'Refrigeración',tags:'Nuevo',sku:'R101',
       price:'45600.00',compare_at_price:null,inventory_quantity:5,image:null,variant_id:102,status:'active'},
-    {id:3,title:'Freidora Doble Pitco SSH55',body_html:'Gas LP / 2 canastas / 35 lbs',
+    {id:3,title:'Freidora Doble Pitco SSH55',metafields:{custom:{voltaje:'',capacidad:'35 lbs',tipo_de_gas:'Gas Natural'}},
       vendor:'Pitco',product_type:'Cocción',tags:'Reacondicionado',sku:'F301',
-      price:'110000.00',compare_at_price:'121000.00',inventory_quantity:4,image:null,variant_id:103,status:'active'},
-    {id:4,title:'Licuadora Vitamix The Quiet One (Falla motor)',body_html:'120v / 1 ph',
-      vendor:'Vitamix',product_type:'Licuadoras',tags:'Por Reparar',sku:'L999',
-      price:'0.00',compare_at_price:null,inventory_quantity:1,image:null,variant_id:104,status:'draft'}];
+      price:'110000.00',compare_at_price:'121000.00',inventory_quantity:4,image:null,variant_id:103,status:'active'}];
   updSt(true);
   populateFilters();
   renderP(S.products);
