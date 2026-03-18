@@ -714,28 +714,46 @@ function filterP(){
   renderP(filtered);
 }
 
-// ── UTILS PARA METACAMPOS ────────────────────────────
+// ── UTILS PARA METACAMPOS (A PRUEBA DE BALAS) ────────────
 function getMeta(p, key) {
-  // Maneja tanto la estructura de la API normal (metafields.custom) como un nivel plano
   if (!p) return '';
-  if (p.metafields && p.metafields.custom && p.metafields.custom[key]) return p.metafields.custom[key];
-  if (p.metafields && p.metafields[key]) return p.metafields[key];
+  // 1. Check de estructura nativa Shopify
+  if (p.metafields) {
+    if (Array.isArray(p.metafields)) {
+      const meta = p.metafields.find(m => m.key === key);
+      if (meta) return meta.value;
+    }
+    if (p.metafields.custom && p.metafields.custom[key]) return p.metafields.custom[key];
+    if (p.metafields[key]) return p.metafields[key];
+  }
+  // 2. Revisión a la raíz
   if (p[key]) return p[key];
+  // 3. Fallback de localStorage interno de la app
+  try {
+    const localMeta = JSON.parse(localStorage.getItem('comza_meta_' + p.id) || '{}');
+    if (localMeta.custom && localMeta.custom[key]) return localMeta.custom[key];
+    if (localMeta[key]) return localMeta[key];
+  } catch(e) {}
   return '';
 }
 
 function formatSpecs(v, c, g) {
   let arr = [];
+  let volt = String(v || '').trim();
+  let cap = String(c || '').trim();
+  let gas = String(g || '').trim();
   
-  if(v && v.toUpperCase() !== 'N/A') {
-    // Para voltaje, quitamos la palabra "voltaje" (no case sensitive) y dejamos solo el valor
-    arr.push(v.replace(/voltaje/gi, '').trim());
+  // Voltaje: quitamos la palabra y omitimos si es N/A o vacío
+  if(volt && volt.toUpperCase() !== 'N/A') {
+    arr.push(volt.replace(/voltaje/gi, '').trim());
   }
-  if(c && c.toUpperCase() !== 'N/A') {
-    arr.push(`Capacidad: ${c}`);
+  // Capacidad: eliminamos prefijo y omitimos si es N/A o vacío
+  if(cap && cap.toUpperCase() !== 'N/A') {
+    arr.push(cap);
   }
-  if(g && g.toUpperCase() !== 'N/A') {
-    arr.push(`Tipo de Gas: ${g}`);
+  // Tipo de Gas: eliminamos prefijo y omitimos si es N/A o vacío
+  if(gas && gas.toUpperCase() !== 'N/A') {
+    arr.push(gas);
   }
   
   return arr.join(' • ');
@@ -809,7 +827,7 @@ async function savP(id,vid){
   const i=S.products.findIndex(p=>p.id===id);
   if(i>=0){
     S.products[i]={...S.products[i],...u};
-    S.products[i].metafields = metafields; // Sincronización visual
+    S.products[i].metafields = metafields;
   }
   
   if(!S.demo){try{
@@ -880,7 +898,6 @@ function fillL(){
     document.getElementById('lPC').value=fN(Math.round(price/1.16).toString());
     document.getElementById('lHP').checked=false;togPr();}
 
-  // Cargar info técnica de los metacampos
   document.getElementById('lVolt').value = getMeta(p, 'voltaje');
   document.getElementById('lCap').value = getMeta(p, 'capacidad');
   document.getElementById('lGas').value = getMeta(p, 'tipo_de_gas');
@@ -934,7 +951,6 @@ function updL(){
     document.getElementById('L-pri').textContent=priV?`$ ${priV} MXN`:'';
     document.getElementById('L-prc').textContent=prcV?`$${prcV} MXN`:'';}
 
-  // Generar cadena de Especificaciones en la Etiqueta
   const v = document.getElementById('lVolt').value;
   const c = document.getElementById('lCap').value;
   const g = document.getElementById('lGas').value;
@@ -951,13 +967,10 @@ function updL(){
 
   setTimeout(scaleLabel,10);}
 
-/* =========================================
-   NUEVA FUNCIÓN DE IMPRESIÓN AISLADA
-========================================= */
 function printL(){
   updL();
   const pc = document.getElementById('printContainer');
-  pc.innerHTML = ''; // Limpiar anteriores
+  pc.innerHTML = ''; 
   
   const clone = document.getElementById('lblP').cloneNode(true);
   const isRepair = document.getElementById('lblP').classList.contains('is-repair');
@@ -968,9 +981,6 @@ function printL(){
   window.print();
 }
 
-/* =========================================
-   NUEVA FUNCIÓN DE DESCARGA PNG AISLADA
-========================================= */
 async function dlPNG(elId, prefix){
   try {
     const el = document.getElementById(elId);
@@ -1040,10 +1050,9 @@ function buildLabelHTML(p){
   const mainIva=fN(hasPromo?p.compare_at_price:p.price);
   const mainCash=fN(Math.round((hasPromo?cap:price)/1.16).toString());
   
-  // Extraer Specs desde metacampos (Batch)
-  const v = getMeta(p, 'voltaje').toString();
-  const c = getMeta(p, 'capacidad').toString();
-  const g = getMeta(p, 'tipo_de_gas').toString();
+  const v = getMeta(p, 'voltaje');
+  const c = getMeta(p, 'capacidad');
+  const g = getMeta(p, 'tipo_de_gas');
   const specs = formatSpecs(v, c, g);
   
   return`<div class="label print-label${hasPromo?' has-promo':''}">
