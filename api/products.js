@@ -11,12 +11,13 @@ module.exports = async (req, res) => {
 
   const hdrs = await shopifyHeaders();
 
-  // ── GET: List all products with pagination ──
+  // ── GET: Obtener productos y sus Metacampos de forma automática ──
   if (req.method === 'GET') {
     try {
       let all = [];
       let url = shopUrl('products.json?limit=250&status=active');
 
+      // 1. Obtener todos los productos (Vía REST normal)
       while (url) {
         const r = await fetch(url, { headers: hdrs });
 
@@ -36,13 +37,71 @@ module.exports = async (req, res) => {
         }
       }
 
-      return res.json({ products: all.map(normalizeProduct), total: all.length });
+      // 2. Obtener los Metacampos de la sección "custom" (Vía GraphQL súper rápido)
+      let metafieldsMap = {};
+      let hasNext = true;
+      let cursor = null;
+      const gqlUrl = shopUrl('graphql.json');
+
+      while (hasNext) {
+        const query = `
+          query {
+            products(first: 250${cursor ? `, after: "${cursor}"` : ''}) {
+              pageInfo { hasNextPage endCursor }
+              edges {
+                node {
+                  legacyResourceId
+                  voltaje: metafield(namespace: "custom", key: "voltaje") { value }
+                  capacidad: metafield(namespace: "custom", key: "capacidad") { value }
+                  tipo_de_gas: metafield(namespace: "custom", key: "tipo_de_gas") { value }
+                }
+              }
+            }
+          }
+        `;
+        
+        const gr = await fetch(gqlUrl, {
+          method: 'POST',
+          headers: { ...hdrs, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+
+        if (gr.ok) {
+          const gdata = await gr.json();
+          const productsNode = gdata.data?.products;
+          if (productsNode) {
+            productsNode.edges.forEach(edge => {
+              metafieldsMap[edge.node.legacyResourceId] = {
+                voltaje: edge.node.voltaje?.value || '',
+                capacidad: edge.node.capacidad?.value || '',
+                tipo_de_gas: edge.node.tipo_de_gas?.value || ''
+              };
+            });
+            hasNext = productsNode.pageInfo.hasNextPage;
+            cursor = productsNode.pageInfo.endCursor;
+          } else {
+            hasNext = false;
+          }
+        } else {
+          hasNext = false; // Falla silenciosa si GraphQL no responde
+        }
+      }
+
+      // 3. Fusionar la información antes de mandarla a la web
+      const finalProducts = all.map(p => {
+        const np = normalizeProduct(p);
+        // Le inyectamos los metacampos que encontramos
+        np.metafields = { custom: metafieldsMap[p.id] || {} };
+        return np;
+      });
+
+      return res.json({ products: finalProducts, total: all.length });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }
   }
 
-  // ── POST: Create new product in Shopify ──
+  // ── POST: Crear un nuevo producto en Shopify ──
   if (req.method === 'POST') {
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
@@ -64,14 +123,30 @@ module.exports = async (req, res) => {
         }
       };
 
-      // Add metafields if provided
+      // Se guardan los metacampos técnicos y administrativos correctamente
       if (metafields && Object.keys(metafields).length > 0) {
-        payload.product.metafields = Object.entries(metafields).map(([key, value]) => ({
-          namespace: 'comza',
-          key,
-          value: String(value),
-          type: 'single_line_text_field',
-        }));
+        payload.product.metafields = [];
+        for (const [key, value] of Object.entries(metafields)) {
+          if (key === 'custom' && typeof value === 'object') {
+            for (const [cKey, cValue] of Object.entries(value)) {
+              if (cValue) {
+                payload.product.metafields.push({
+                  namespace: 'custom',
+                  key: cKey,
+                  value: String(cValue),
+                  type: 'single_line_text_field',
+                });
+              }
+            }
+          } else {
+            payload.product.metafields.push({
+              namespace: 'comza',
+              key,
+              value: String(value),
+              type: 'single_line_text_field',
+            });
+          }
+        }
       }
 
       const r = await fetch(shopUrl('products.json'), {
