@@ -118,12 +118,12 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   flex-direction:column;
   box-shadow:0 4px 20px rgba(0,0,0,.15);
   flex-shrink:0;
-  border:1px solid #e0e0e0;
+  border:1px solid #000; /* Borde sólido */
   box-sizing:border-box;
   position:relative;
 }
 .label-name{
-  font-size:26px; /* NOMBRE DEL PRODUCTO GRANDE */
+  font-size:26px; 
   font-weight:800;
   color:#000; 
   line-height:1.15;
@@ -143,16 +143,15 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 }
 
 /* =========================================
-  LÓGICA ADAPTABLE DE PRECIOS (LINEAL/SÓLIDO)
-  - FLEX 1 para que llene el espacio disponible de la hoja -
+  LÓGICA ADAPTABLE DE PRECIOS 
 =========================================
 */
 .prices-container {
   display: flex;
-  flex-direction: column; /* SIEMPRE 1 COLUMNA DE ARRIBA A ABAJO */
-  gap: 12px;
+  flex-direction: column; /* Siempre apila en columna */
+  gap: 8px;
   width: 100%;
-  flex: 1; /* ¡MAGIA! Estira la caja para rellenar la hoja */
+  flex: 1; /* Estira contenedor en el espacio disponible */
   margin-bottom: 12px;
 }
 
@@ -162,12 +161,11 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   align-items: center; 
   justify-content: center; 
   text-align: center; 
-  background: #fff; /* SIN FONDOS GRISES */
+  background: #fff; 
   padding: 10px 6px; 
   border-radius: 8px; 
-  border: 2px solid #000; /* BORDES NEGROS SÓLIDOS */
-  flex: 1; /* Cada recuadro comparte el espacio vertical por igual */
-  min-height: 0;
+  border: 2px solid #000; 
+  flex: 1; /* Estira a lo alto */
 }
 
 .price-amount { 
@@ -188,40 +186,52 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 }
 
 /* SI NO HAY PROMO: Solo 2 cajas GIGANTES rellenando la hoja */
-.price-col.no-promo-col .price-amount { font-size: 60px; }
+.price-col.no-promo-col .price-amount { font-size: 56px; }
 .price-col.no-promo-col .price-label { font-size: 16px; }
 
-/* SI HAY PROMO: 4 cajas que se ajustan (Sin tachado) */
-.price-col.old-price {
-  border: 2px solid #000; 
+/* =========================================
+  ESTILOS CUANDO HAY PROMOCIÓN 
+=========================================
+*/
+.old-prices-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
 }
-.price-col.old-price .price-amount {
-  text-decoration: none; /* NO SE TACHA */
-  font-size: 26px; /* Más sutil */
+.old-prices-row .price-col {
+  padding: 6px;
+  border: 2px solid #000;
 }
-.price-col.old-price .price-label {
+/* No tachado y tamaño sutil */
+.old-prices-row .price-amount {
+  font-size: 20px;
+  text-decoration: none !important;
+}
+.old-prices-row .price-label {
   font-size: 10px;
 }
 
+/* Los recuadros de promoción abajo son enormes */
 .price-col.promo-price {
-  border: 3px solid #000; /* Borde más grueso para enfatizar la promo */
+  border: 3px solid #000; /* Borde más fuerte */
+  padding: 12px 6px;
 }
 .price-col.promo-price .price-amount {
-  font-size: 40px; /* ENORME */
+  font-size: 42px; 
 }
 .price-col.promo-price .price-label {
-  font-size: 12px; 
+  font-size: 14px; 
 }
 
 /* ESPECIFICACIONES Y LOGO FINAL */
-.label-specs{text-align:center;font-size:16px;font-weight:700;color:#000;letter-spacing:.3px;margin-bottom:10px; margin-top:10px; padding:0 10px;}
+.label-specs{text-align:center;font-size:16px;font-weight:700;color:#000;letter-spacing:.3px;margin-bottom:10px; padding:0 10px;}
 
 .label-brand{
   text-align:center;
-  margin-top: auto; /* Fuerza el logo al borde inferior */
+  margin-top: auto; /* Empuja el logo al límite inferior */
   padding-top: 10px;
 }
-.label-brand img{height:30px; object-fit:contain; filter: grayscale(100%);}
+.label-brand img{height:36px; object-fit:contain; filter: grayscale(100%);}
 
 .label.is-repair { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; padding: 0 !important; }
 .label.is-repair > *:not(.label-sku):not(.label-brand) { display: none !important; }
@@ -799,7 +809,6 @@ function filterP(){
   renderP(filtered);
 }
 
-// ── UTILS PARA METACAMPOS ────────────
 function getMeta(p, key) {
   if (!p) return '';
   if (p.metafields) {
@@ -914,8 +923,6 @@ async function savP(id,vid){
   populateFilters();
   renderP(S.products);clPn()}
 
-// ── LABEL FUNCTIONS ──────────────────────────────────
-
 function popSel(){
   document.getElementById('lSelList').innerHTML = S.products.map(p => 
     `<option value="${p.sku ? '['+p.sku+'] ' : ''}${p.title}" data-id="${p.id}"></option>`
@@ -987,34 +994,37 @@ function goL(id){
   },80)}
 function togPr(){document.getElementById('prF').style.display=document.getElementById('lHP').checked?'block':'none'}
 
-// ── CONSTRUCTOR DE PRECIOS ADAPTABLES (BLANCO Y NEGRO / LINEAL) ──
+// ── CONSTRUCTOR DE PRECIOS ADAPTABLES ──
 function buildPricesHTML(pi, pc, prI, prC, hasPromo) {
   if (hasPromo) {
     return `
-      <div class="price-col old-price">
-        <div class="price-amount">$${pi}</div>
-        <div class="price-label">IVA INCLUIDO (REGULAR)</div>
+      <div class="old-prices-row" style="display: flex; gap: 8px; width: 100%;">
+        <div class="price-col old-price" style="flex: 1; padding: 6px;">
+          <div class="price-amount">$${pi}</div>
+          <div class="price-label">IVA INCL. (REGULAR)</div>
+        </div>
+        <div class="price-col old-price" style="flex: 1; padding: 6px;">
+          <div class="price-amount">$${pc}</div>
+          <div class="price-label">EFECTIVO (REGULAR)</div>
+        </div>
       </div>
-      <div class="price-col old-price">
-        <div class="price-amount">$${pc}</div>
-        <div class="price-label">EFECTIVO (REGULAR)</div>
-      </div>
-      <div class="price-col promo-price">
+      <div class="price-col promo-price" style="flex: 1;">
         <div class="price-amount">$${prI}</div>
         <div class="price-label">IVA INCL. CON PROMOCIÓN</div>
       </div>
-      <div class="price-col promo-price">
+      <div class="price-col promo-price" style="flex: 1;">
         <div class="price-amount">$${prC}</div>
         <div class="price-label">EFECTIVO CON PROMOCIÓN</div>
       </div>
     `;
   } else {
+    // SIN PROMOCIÓN: Dos enormes que llenan todo
     return `
-      <div class="price-col no-promo-col">
+      <div class="price-col no-promo-col" style="flex: 1;">
         <div class="price-amount">$${pi}</div>
         <div class="price-label">IVA INCLUIDO</div>
       </div>
-      <div class="price-col no-promo-col">
+      <div class="price-col no-promo-col" style="flex: 1;">
         <div class="price-amount">$${pc}</div>
         <div class="price-label">PAGO EN EFECTIVO</div>
       </div>
