@@ -102,32 +102,152 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .lp-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(37,99,235,.06)}
 .lp-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t3)}
 .label-wrap{display:flex;justify-content:center; align-items:flex-start;}
-.label{background:#fff;width:384px;height:576px;padding:28px 26px 20px;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#333;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.15);flex-shrink:0;border:1px solid #e0e0e0;box-sizing:border-box;position:relative;}
-.label-name{font-size:16px;font-weight:700;color:#555;line-height:1.3;margin-bottom:10px;text-align:center}
-.label-sku{font-size:52px;font-weight:900;color:#333;line-height:1.05;margin-bottom:16px;letter-spacing:.5px;overflow-wrap:break-word;word-break:break-word;text-align:center}
 
-/* ESTILOS DE PRECIOS MEJORADOS CON GRID */
-.price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; width: 100%; }
-.price-col { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #f8fafc; padding: 10px 6px; border-radius: 8px; border: 1px solid #e2e8f0; }
-.price-amount { font-size: 24px; font-weight: 900; color: #111; letter-spacing: -0.5px; line-height: 1.1; word-break: break-word; }
-.price-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px; line-height: 1.2; }
-.promo-section { margin-top: 10px; border-top: 2px dashed #ccc; padding-top: 12px; }
-.promo-title { text-align: center; font-size: 18px; font-weight: 900; color: #e74c3c; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 10px; }
-.promo-row .price-col { background: #fff1f2; border-color: #fecdd3; }
-.promo-row .price-amount { font-size: 26px; color: #be123c; }
-.promo-row .price-label { font-size: 11px; font-weight: 800; color: #9f1239; }
+/* =========================================
+  ESTILOS CORE DE LA ETIQUETA (100% NEGRO)
+=========================================
+*/
+.label{
+  background:#fff;
+  width:384px;
+  height:576px;
+  padding:28px 26px 20px;
+  font-family:'Assistant',Arial,Helvetica,sans-serif;
+  color:#000; /* Forzando negro absoluto */
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+  flex-shrink:0;
+  border:1px solid #e0e0e0;
+  box-sizing:border-box;
+  position:relative;
+}
+.label-name{
+  font-size:22px; /* MÁS GRANDE */
+  font-weight:800;
+  color:#000; 
+  line-height:1.2;
+  margin-bottom:10px;
+  text-align:center;
+}
+.label-sku{
+  font-size:48px;
+  font-weight:900;
+  color:#000;
+  line-height:1.05;
+  margin-bottom:16px;
+  letter-spacing:.5px;
+  overflow-wrap:break-word;
+  word-break:break-word;
+  text-align:center;
+}
 
-.label.has-promo .price-row:not(.promo-row){opacity:.55}
-.label.has-promo .price-row:not(.promo-row) .price-amount{font-size:16px;font-weight:600;text-decoration:line-through;color:#64748b}
-.label.has-promo .price-row:not(.promo-row) .price-label{font-size:9px;font-weight:500;color:#94a3b8}
+/* =========================================
+  LÓGICA ADAPTABLE DE PRECIOS 
+=========================================
+*/
+/* Contenedor principal de precios: Grid flexible */
+.prices-container {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* Por defecto (Sin promoción): 1 Columna (se apilan verticalmente, enormes) */
+.prices-container { grid-template-columns: 1fr; }
+
+/* Cuando la etiqueta SI tiene promoción: 2 Columnas x 2 Filas */
+.label.has-promo .prices-container {
+  grid-template-columns: 1fr 1fr;
+}
+
+.price-col { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  text-align: center; 
+  background: #f8f8f8; /* Gris muy claro, mejor para impresoras */
+  padding: 12px 6px; 
+  border-radius: 8px; 
+  border: 1px solid #ccc; /* Borde más oscuro */
+}
+
+/* El número del precio */
+.price-amount { 
+  font-weight: 900; 
+  color: #000; 
+  letter-spacing: -0.5px; 
+  line-height: 1.1; 
+  word-break: break-word; 
+  font-size: 34px; /* ENORME por defecto (cuando es 1 columna) */
+}
+
+/* La etiqueta pequeña abajo del precio */
+.price-label { 
+  font-size: 11px; 
+  font-weight: 800; 
+  color: #000; 
+  text-transform: uppercase; 
+  letter-spacing: 0.5px; 
+  margin-top: 5px; 
+  line-height: 1.2; 
+}
+
+/* MODIFICADORES CUANDO HAY PROMOCIÓN (Reducir el tamaño para que quepan 4) */
+.label.has-promo .price-col {
+  padding: 8px 4px;
+}
+.label.has-promo .price-amount {
+  font-size: 26px; /* Más pequeño para que quepa en la cuadrícula */
+}
+
+/* ESTILOS ESPECÍFICOS PARA LOS PRECIOS VIEJOS/TACHADOS (Solo si hay promo) */
+.price-col.old-price {
+  background: #fff; /* Fondo blanco para no distraer */
+  border-style: dashed;
+  opacity: 0.7;
+}
+.price-col.old-price .price-amount {
+  font-size: 16px;
+  text-decoration: line-through;
+  color: #444; /* Gris oscuro */
+}
+.price-col.old-price .price-label {
+  font-size: 9px;
+  color: #444;
+}
+
+/* ESTILOS ESPECÍFICOS PARA LOS PRECIOS NUEVOS/PROMO */
+.price-col.promo-price {
+  background: #f0f0f0;
+  border-color: #000;
+  border-width: 2px;
+}
+.price-col.promo-price .price-amount {
+  font-size: 28px;
+}
+
+.promo-title { 
+  text-align: center; 
+  font-size: 18px; 
+  font-weight: 900; 
+  color: #000; /* Negro en lugar de rojo */
+  text-transform: uppercase; 
+  letter-spacing: 4px; 
+  margin-bottom: 10px; 
+  margin-top: 10px;
+  border-top: 2px dashed #000;
+  padding-top: 10px;
+}
+
 .label-spacer{flex:1}
-.label-specs{text-align:center;font-size:14px;font-weight:600;color:#555;letter-spacing:.3px;margin-bottom:14px; padding:0 10px;}
+.label-specs{text-align:center;font-size:16px;font-weight:700;color:#000;letter-spacing:.3px;margin-bottom:14px; padding:0 10px;}
 
-/* LOGO FIX */
 .label-brand{text-align:center;}
-.label-brand img{height:30px; object-fit:contain;}
+.label-brand img{height:30px; object-fit:contain; filter: grayscale(100%);} /* Forzar logo b/n si es posible */
 
-/* MODO ETIQUETA POR REPARAR GIGANTE HORIZONTAL */
 .label.is-repair { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; padding: 0 !important; }
 .label.is-repair > *:not(.label-sku):not(.label-brand) { display: none !important; }
 .label.is-repair .label-sku { display: block !important; transform: rotate(-90deg) !important; margin: 0 !important; color: #000 !important; letter-spacing: 2px !important; }
@@ -146,81 +266,19 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .lbl-sm-name{font-size:11px;font-weight:700;line-height:1.2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:#111}
 .lbl-sm-cond{font-size:9px;font-weight:600;color:#666;margin-top:2px}
 
-/* ====================================================
-   NUEVO CONTENEDOR DE IMPRESIÓN (AÍSLA LAS ETIQUETAS)
-   ==================================================== */
-#printContainer {
-  display: none;
-}
+#printContainer { display: none; }
 
 @media print {
   @page { margin: 0; size: 4in 6in; }
-  
-  /* Escondemos toda la interfaz web normal */
-  body > .shell, 
-  body > .po, 
-  body > .pn, 
-  body > .tst-c, 
-  body > .mob-nav {
-    display: none !important;
-  }
+  body > .shell, body > .po, body > .pn, body > .tst-c, body > .mob-nav { display: none !important; }
+  body, html { margin: 0 !important; padding: 0 !important; background: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
-  body, html {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #fff !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+  #printContainer { display: block !important; position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
 
-  /* Mostramos SOLO el contenedor de impresión */
-  #printContainer {
-    display: block !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
+  .print-label { width: 4in !important; height: 6in !important; box-sizing: border-box !important; padding: 0.25in !important; margin: 0 !important; background: white !important; border: none !important; box-shadow: none !important; transform: none !important; zoom: 1 !important; page-break-after: always !important; page-break-inside: avoid !important; display: flex !important; flex-direction: column !important; }
+  .print-label:last-child { page-break-after: avoid !important; }
 
-  /* Etiquetas tamaño 4x6 */
-  .print-label {
-    width: 4in !important;
-    height: 6in !important;
-    box-sizing: border-box !important;
-    padding: 0.25in !important;
-    margin: 0 !important;
-    background: white !important;
-    border: none !important;
-    box-shadow: none !important;
-    transform: none !important; /* IMPORTANTE PARA MAC/SAFARI */
-    zoom: 1 !important; /* IMPORTANTE PARA MAC/SAFARI */
-    page-break-after: always !important;
-    page-break-inside: avoid !important;
-    display: flex !important; 
-    flex-direction: column !important;
-  }
-  .print-label:last-child {
-    page-break-after: avoid !important;
-  }
-
-  /* Etiquetas Refacción 3x1 */
-  .print-ref {
-    width: 3in !important;
-    height: 1in !important;
-    box-sizing: border-box !important;
-    padding: 0.08in !important;
-    margin: 0 !important;
-    background: white !important;
-    border: none !important;
-    box-shadow: none !important;
-    transform: none !important;
-    zoom: 1 !important;
-    page-break-after: avoid !important;
-    page-break-inside: avoid !important;
-    display: flex !important;
-  }
+  .print-ref { width: 3in !important; height: 1in !important; box-sizing: border-box !important; padding: 0.08in !important; margin: 0 !important; background: white !important; border: none !important; box-shadow: none !important; transform: none !important; zoom: 1 !important; page-break-after: avoid !important; page-break-inside: avoid !important; display: flex !important; }
 }
 
 .rtbl{width:100%;border-collapse:collapse;font-size:11.5px}
@@ -414,24 +472,19 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   <div class="lp-box">
     <div class="lp-tag">Vista previa 4×6"</div>
     <div class="label-wrap" id="lblWrap">
+      
       <div class="label" id="lblP">
         <div class="label-name" id="L-nm">Nombre del Producto</div>
         <div class="label-sku" id="L-sku">SKU:</div>
-        <div class="price-row">
-          <div class="price-col"><div class="price-amount" id="L-pi"></div><div class="price-label">IVA INCLUIDO</div></div>
-          <div class="price-col"><div class="price-amount" id="L-pc"></div><div class="price-label">PAGO EN EFECTIVO</div></div>
-        </div>
-        <div class="promo-section" id="L-prW" style="display:none">
-          <div class="promo-title">PROMOCIÓN</div>
-          <div class="price-row promo-row">
-            <div class="price-col"><div class="price-amount" id="L-pri"></div><div class="price-label">IVA INCLUIDO</div></div>
-            <div class="price-col"><div class="price-amount" id="L-prc"></div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
-          </div>
-        </div>
+        
+        <div class="prices-container" id="L-prices-wrapper">
+            </div>
+
         <div class="label-spacer"></div>
         <div class="label-specs" id="L-sp" style="display:none"></div>
         <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
       </div>
+
     </div>
     <div class="lbl-act">
       <button class="btn btn-g" onclick="printL()">🖨️ Imprimir</button>
@@ -714,10 +767,9 @@ function filterP(){
   renderP(filtered);
 }
 
-// ── UTILS PARA METACAMPOS (A PRUEBA DE BALAS) ────────────
+// ── UTILS PARA METACAMPOS ────────────
 function getMeta(p, key) {
   if (!p) return '';
-  // 1. Check de estructura nativa Shopify
   if (p.metafields) {
     if (Array.isArray(p.metafields)) {
       const meta = p.metafields.find(m => m.key === key);
@@ -726,9 +778,7 @@ function getMeta(p, key) {
     if (p.metafields.custom && p.metafields.custom[key]) return p.metafields.custom[key];
     if (p.metafields[key]) return p.metafields[key];
   }
-  // 2. Revisión a la raíz
   if (p[key]) return p[key];
-  // 3. Fallback de localStorage interno de la app
   try {
     const localMeta = JSON.parse(localStorage.getItem('comza_meta_' + p.id) || '{}');
     if (localMeta.custom && localMeta.custom[key]) return localMeta.custom[key];
@@ -743,20 +793,11 @@ function formatSpecs(v, c, g) {
   let cap = String(c || '').trim();
   let gas = String(g || '').trim();
   
-  // Voltaje: quitamos la palabra y omitimos si es N/A o vacío
-  if(volt && volt.toUpperCase() !== 'N/A') {
-    arr.push(volt.replace(/voltaje/gi, '').trim());
-  }
-  // Capacidad: eliminamos prefijo y omitimos si es N/A o vacío
-  if(cap && cap.toUpperCase() !== 'N/A') {
-    arr.push(cap);
-  }
-  // Tipo de Gas: eliminamos prefijo y omitimos si es N/A o vacío
-  if(gas && gas.toUpperCase() !== 'N/A') {
-    arr.push(gas);
-  }
+  if(volt && volt.toUpperCase() !== 'N/A') { arr.push(volt.replace(/voltaje/gi, '').trim()); }
+  if(cap && cap.toUpperCase() !== 'N/A') { arr.push(cap); }
+  if(gas && gas.toUpperCase() !== 'N/A') { arr.push(gas); }
   
-  return arr.join(' • ');
+  return arr.join(' / ');
 }
 
 function opEd(id){
@@ -914,6 +955,43 @@ function goL(id){
   },80)}
 function togPr(){document.getElementById('prF').style.display=document.getElementById('lHP').checked?'block':'none'}
 
+// ── LOGICA PARA CONSTRUIR LOS BLOQUES DE PRECIO ADAPTABLES ──
+function buildPricesHTML(pi, pc, prI, prC, hasPromo) {
+  if (hasPromo) {
+    return `
+      <div class="promo-title">PROMOCIÓN</div>
+      <div class="price-col old-price">
+        <div class="price-amount">$${pi}</div>
+        <div class="price-label">IVA INCLUIDO</div>
+      </div>
+      <div class="price-col old-price">
+        <div class="price-amount">$${pc}</div>
+        <div class="price-label">PAGO EN EFECTIVO</div>
+      </div>
+      <div class="price-col promo-price">
+        <div class="price-amount">$${prI}</div>
+        <div class="price-label">IVA INCLUIDO</div>
+      </div>
+      <div class="price-col promo-price">
+        <div class="price-amount">$${prC}</div>
+        <div class="price-label">PAGO EN EFECTIVO</div>
+      </div>
+    `;
+  } else {
+    // Si no hay promoción, creamos solo 2 recuadros enormes que llenan la columna
+    return `
+      <div class="price-col">
+        <div class="price-amount">$${pi}</div>
+        <div class="price-label">IVA INCLUIDO</div>
+      </div>
+      <div class="price-col">
+        <div class="price-amount">$${pc}</div>
+        <div class="price-label">PAGO EN EFECTIVO</div>
+      </div>
+    `;
+  }
+}
+
 function updL(){
   const nm=document.getElementById('lNm').value;
   const cd=document.getElementById('lCd').value;
@@ -923,7 +1001,6 @@ function updL(){
   document.getElementById('L-nm').textContent=cd?`${nm} (${cd})`:nm||'Nombre del Producto';
 
   const sku=document.getElementById('lSk').value;
-  
   const skuTxt = isRepair ? (sku || 'S/N') : (sku ? `SKU: ${sku}`:'SKU:');
   const skuEl=document.getElementById('L-sku');
   skuEl.textContent=skuTxt;
@@ -937,19 +1014,19 @@ function updL(){
 
   const pi=document.getElementById('lPI').value;
   const pc=document.getElementById('lPC').value;
-  document.getElementById('L-pi').textContent=pi?`$ ${pi} MXN`:'';
-  document.getElementById('L-pc').textContent=pc?`$${pc} MXN`:'';
-
   const pr=document.getElementById('lHP').checked;
   const priV=document.getElementById('lPrI').value;
   const prcV=document.getElementById('lPrC').value;
   const showPromo=pr&&(priV||prcV);
-  document.getElementById('L-prW').style.display=showPromo?'block':'none';
-  if(!isRepair) document.getElementById('lblP').classList.toggle('has-promo',showPromo);
+
+  // Inyectamos el HTML de los precios dependiendo de si hay promo o no
+  const pricesWrapper = document.getElementById('L-prices-wrapper');
+  pricesWrapper.innerHTML = buildPricesHTML(pi, pc, priV, prcV, showPromo);
   
-  if(showPromo){
-    document.getElementById('L-pri').textContent=priV?`$ ${priV} MXN`:'';
-    document.getElementById('L-prc').textContent=prcV?`$${prcV} MXN`:'';}
+  // Cambiamos la clase del label principal para activar el grid 2x2 si es necesario
+  if(!isRepair) {
+    document.getElementById('lblP').classList.toggle('has-promo', showPromo);
+  }
 
   const v = document.getElementById('lVolt').value;
   const c = document.getElementById('lCap').value;
@@ -961,8 +1038,9 @@ function updL(){
   spEl.textContent = spStr;
   spEl.style.display = spStr ? 'block' : 'none';
 
+  // Solo ajustamos tamaños muy extremos
   document.querySelectorAll('.price-amount').forEach(el => {
-    el.style.fontSize = el.textContent.length > 13 ? '18px' : el.textContent.length > 10 ? '21px' : '';
+    if (el.textContent.length > 13) { el.style.fontSize = '18px'; }
   });
 
   setTimeout(scaleLabel,10);}
@@ -1047,8 +1125,11 @@ function buildLabelHTML(p){
   const price=parseFloat(p.price||0);const cap=parseFloat(p.compare_at_price||0);
   const hasPromo=cap>0&&cap>price;
   const displayName=cond?`${p.title} (${cond})`:p.title;
-  const mainIva=fN(hasPromo?p.compare_at_price:p.price);
-  const mainCash=fN(Math.round((hasPromo?cap:price)/1.16).toString());
+  
+  const pi = fN(hasPromo?p.compare_at_price:p.price);
+  const pc = fN(Math.round((hasPromo?cap:price)/1.16).toString());
+  const prI = fN(p.price);
+  const prC = fN(Math.round(price/1.16).toString());
   
   const v = getMeta(p, 'voltaje');
   const c = getMeta(p, 'capacidad');
@@ -1058,15 +1139,9 @@ function buildLabelHTML(p){
   return`<div class="label print-label${hasPromo?' has-promo':''}">
     <div class="label-name">${esc(displayName)}</div>
     <div class="label-sku" style="font-size:${sz}px">${esc(skuTxt)}</div>
-    <div class="price-row">
-      <div class="price-col"><div class="price-amount">$ ${mainIva} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
-      <div class="price-col"><div class="price-amount">$${mainCash} MXN</div><div class="price-label">PAGO EN EFECTIVO</div></div>
+    <div class="prices-container">
+      ${buildPricesHTML(pi, pc, prI, prC, hasPromo)}
     </div>
-    ${hasPromo?`<div class="promo-section"><div class="promo-title">PROMOCIÓN</div>
-      <div class="price-row promo-row">
-        <div class="price-col"><div class="price-amount">$ ${fN(p.price)} MXN</div><div class="price-label">IVA INCLUIDO</div></div>
-        <div class="price-col"><div class="price-amount">$${fN(Math.round(price/1.16).toString())} MXN</div><div class="price-label">PAGO EN<br>EFECTIVO</div></div>
-      </div></div>`:''}
     <div class="label-spacer"></div>
     ${specs?`<div class="label-specs">${esc(specs)}</div>`:''}
     <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
@@ -1078,10 +1153,6 @@ function printBatch(){
   
   const pc = document.getElementById('printContainer');
   pc.innerHTML = selected.map(p=>buildLabelHTML(p)).join('');
-  
-  pc.querySelectorAll('.price-amount').forEach(el => {
-    el.style.fontSize = el.textContent.length > 13 ? '18px' : el.textContent.length > 10 ? '21px' : '';
-  });
 
   toast(`Imprimiendo ${selected.length} etiquetas...`,'ok');
   setTimeout(()=>{ window.print(); }, 200);
