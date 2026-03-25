@@ -166,6 +166,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   border-radius: 8px; 
   border: 2px solid #000; 
   flex: 1; /* Estira a lo alto */
+  min-height: 0;
 }
 
 .price-amount { 
@@ -244,7 +245,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   display: flex;
   justify-content: center;
 }
-/* Actualización del estilo del logo con imagen externa */
 .label-brand img{height:40px; object-fit:contain; filter: grayscale(100%);}
 
 .label.is-repair { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; padding: 0 !important; }
@@ -343,7 +343,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .rtbl td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--t1);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rtbl tr:hover td{background:var(--bg3)}
 .rtbl-wrap{max-height:60vh;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.tag{display:inline-flex;padding:2px 7px;border-radius:99px;font-size:99px;font-weight:700;font-family:var(--mono)}
+.tag{display:inline-flex;padding:2px 7px;border-radius:99px;font-size:9px;font-weight:700;font-family:var(--mono)}
 .tag-g{background:rgba(37,99,235,.1);color:#2563eb;border:1px solid rgba(37,99,235,.25)}
 .tag-r{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}
 .tag-a{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}
@@ -539,7 +539,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 
         <div class="label-specs" id="L-sp" style="display:none"></div>
         <div class="label-brand">
-            <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/LogoCOMZA_fd9b6abd-6503-4f9e-974f-076b91f1d0f2.png?v=1731598820" alt="Grupo COMZA">
+            <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/logo2_4x_658b51ec-47fb-4c37-93cb-cb28793673bc.png?v=1774477209" alt="Grupo COMZA">
         </div>
       </div>
 
@@ -1163,11 +1163,11 @@ function buildLabelHTML(p){
      const rawSku = sku || 'S/N';
      const l = rawSku.length;
      const sz = l <= 5 ? 160 : l <= 8 ? 120 : 90;
-     // Logo COMZA actualizado también en impresión por lote
+     // Logo incrustado también en impresión por lote
      return`<div class="label print-label is-repair">
        <div class="label-sku" style="font-size:${sz}px">${esc(rawSku)}</div>
        <div class="label-brand">
-            <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/LogoCOMZA_fd9b6abd-6503-4f9e-974f-076b91f1d0f2.png?v=1731598820" alt="Grupo COMZA">
+            <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/logo2_4x_658b51ec-47fb-4c37-93cb-cb28793673bc.png?v=1774477209" alt="Grupo COMZA">
        </div>
      </div>`;
   }
@@ -1188,7 +1188,7 @@ function buildLabelHTML(p){
   const g = getMeta(p, 'tipo_de_gas');
   const specs = formatSpecs(v, c, g);
   
-  // Logo COMZA actualizado y Emojis Negros también en impresión por lote
+  // Logo incrustado y Emojis Negros también en impresión por lote
   return`<div class="label print-label${hasPromo?' has-promo':''}">
     <div class="label-name">${esc(displayName)}</div>
     <div class="label-sku" style="font-size:${sz}px">${esc(skuTxt)}</div>
@@ -1197,7 +1197,7 @@ function buildLabelHTML(p){
     </div>
     ${specs?`<div class="label-specs">${esc(specs)}</div>`:''}
     <div class="label-brand">
-        <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/LogoCOMZA_fd9b6abd-6503-4f9e-974f-076b91f1d0f2.png?v=1731598820" alt="Grupo COMZA">
+        <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/logo2_4x_658b51ec-47fb-4c37-93cb-cb28793673bc.png?v=1774477209" alt="Grupo COMZA">
     </div>
   </div>`}
 
