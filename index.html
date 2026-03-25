@@ -123,7 +123,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   position:relative;
 }
 .label-name{
-  font-size:26px; /* MUCHO MÁS GRANDE */
+  font-size:26px; /* NOMBRE DEL PRODUCTO GRANDE */
   font-weight:800;
   color:#000; 
   line-height:1.15;
@@ -131,7 +131,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   text-align:center;
 }
 .label-sku{
-  font-size:42px; /* Ajustado para dar más peso al nombre */
+  font-size:42px; 
   font-weight:900;
   color:#000;
   line-height:1.05;
@@ -144,21 +144,16 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 
 /* =========================================
   LÓGICA ADAPTABLE DE PRECIOS (LINEAL/SÓLIDO)
+  - FLEX 1 para que llene el espacio disponible de la hoja -
 =========================================
 */
 .prices-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* SIEMPRE 1 COLUMNA DE ARRIBA A ABAJO */
   gap: 12px;
   width: 100%;
-  margin-bottom: 8px;
-}
-
-/* Cuando hay promoción, cambiamos a cuadrícula 2x2 */
-.label.has-promo .prices-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  flex: 1; /* ¡MAGIA! Estira la caja para rellenar la hoja */
+  margin-bottom: 12px;
 }
 
 .price-col { 
@@ -167,14 +162,15 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   align-items: center; 
   justify-content: center; 
   text-align: center; 
-  background: #fff; /* SIN FONDOS DE COLOR */
-  padding: 12px 6px; 
+  background: #fff; /* SIN FONDOS GRISES */
+  padding: 10px 6px; 
   border-radius: 8px; 
-  border: 2px solid #000; /* BORDES NEGROS SÓLIDOS (LINEAL) */
+  border: 2px solid #000; /* BORDES NEGROS SÓLIDOS */
+  flex: 1; /* Cada recuadro comparte el espacio vertical por igual */
+  min-height: 0;
 }
 
 .price-amount { 
-  font-size: 40px; /* ENORME por defecto */
   font-weight: 900; 
   color: #000; 
   letter-spacing: -0.5px; 
@@ -183,7 +179,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 }
 
 .price-label { 
-  font-size: 13px; 
   font-weight: 800; 
   color: #000; 
   text-transform: uppercase; 
@@ -192,40 +187,40 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   line-height: 1.2; 
 }
 
-/* Ajustes cuando es cuadrícula 2x2 (Promoción) */
-.label.has-promo .price-col {
-  padding: 8px 4px;
-}
+/* SI NO HAY PROMO: Solo 2 cajas GIGANTES rellenando la hoja */
+.price-col.no-promo-col .price-amount { font-size: 60px; }
+.price-col.no-promo-col .price-label { font-size: 16px; }
 
-.label.has-promo .price-amount {
-  font-size: 26px; /* Se reduce para caber en 2 columnas */
-}
-
-.label.has-promo .price-label {
-  font-size: 10px; /* Se reduce texto para que quepa "CON PROMOCION" */
-}
-
-/* Precio Viejo (Tachado) */
+/* SI HAY PROMO: 4 cajas que se ajustan (Sin tachado) */
 .price-col.old-price {
   border: 2px solid #000; 
 }
 .price-col.old-price .price-amount {
-  text-decoration: line-through;
-  font-size: 20px; /* Un poco más sutil que el nuevo */
+  text-decoration: none; /* NO SE TACHA */
+  font-size: 26px; /* Más sutil */
+}
+.price-col.old-price .price-label {
+  font-size: 10px;
 }
 
-/* Precio Nuevo (Promo) */
 .price-col.promo-price {
-  border: 3px solid #000; /* Borde ligeramente más grueso para resaltar */
+  border: 3px solid #000; /* Borde más grueso para enfatizar la promo */
 }
 .price-col.promo-price .price-amount {
-  font-size: 28px; 
+  font-size: 40px; /* ENORME */
+}
+.price-col.promo-price .price-label {
+  font-size: 12px; 
 }
 
-.label-spacer{flex:1}
-.label-specs{text-align:center;font-size:16px;font-weight:700;color:#000;letter-spacing:.3px;margin-bottom:14px; padding:0 10px;}
+/* ESPECIFICACIONES Y LOGO FINAL */
+.label-specs{text-align:center;font-size:16px;font-weight:700;color:#000;letter-spacing:.3px;margin-bottom:10px; margin-top:10px; padding:0 10px;}
 
-.label-brand{text-align:center;}
+.label-brand{
+  text-align:center;
+  margin-top: auto; /* Fuerza el logo al borde inferior */
+  padding-top: 10px;
+}
 .label-brand img{height:30px; object-fit:contain; filter: grayscale(100%);}
 
 .label.is-repair { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; padding: 0 !important; }
@@ -518,7 +513,6 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
         <div class="prices-container" id="L-prices-wrapper">
             </div>
 
-        <div class="label-spacer"></div>
         <div class="label-specs" id="L-sp" style="display:none"></div>
         <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
       </div>
@@ -993,7 +987,7 @@ function goL(id){
   },80)}
 function togPr(){document.getElementById('prF').style.display=document.getElementById('lHP').checked?'block':'none'}
 
-// ── LOGICA PARA CONSTRUIR LOS BLOQUES DE PRECIO ADAPTABLES (BLANCO/NEGRO LINEAL) ──
+// ── CONSTRUCTOR DE PRECIOS ADAPTABLES (BLANCO Y NEGRO / LINEAL) ──
 function buildPricesHTML(pi, pc, prI, prC, hasPromo) {
   if (hasPromo) {
     return `
@@ -1016,11 +1010,11 @@ function buildPricesHTML(pi, pc, prI, prC, hasPromo) {
     `;
   } else {
     return `
-      <div class="price-col">
+      <div class="price-col no-promo-col">
         <div class="price-amount">$${pi}</div>
         <div class="price-label">IVA INCLUIDO</div>
       </div>
-      <div class="price-col">
+      <div class="price-col no-promo-col">
         <div class="price-amount">$${pc}</div>
         <div class="price-label">PAGO EN EFECTIVO</div>
       </div>
@@ -1171,7 +1165,6 @@ function buildLabelHTML(p){
     <div class="prices-container">
       ${buildPricesHTML(pi, pc, prI, prC, hasPromo)}
     </div>
-    <div class="label-spacer"></div>
     ${specs?`<div class="label-specs">${esc(specs)}</div>`:''}
     <div class="label-brand"><img src="/comza-logo.svg" alt="Grupo COMZA"></div>
   </div>`}
