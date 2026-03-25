@@ -143,7 +143,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 }
 
 /* =========================================
-  LÓGICA ADAPTABLE DE PRECIOS (LINEAL/SÓLIDO)
+  LÓGICA ADAPTABLE DE PRECIOS 
 =========================================
 */
 .prices-container {
@@ -227,6 +227,13 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   font-size: 14px; 
 }
 
+/* Fuerza negro sólido para emojis de fuego en térmica */
+.black-fire {
+    filter: grayscale(100%) brightness(0);
+    display: inline-block;
+    margin: 0 3px;
+}
+
 /* ESPECIFICACIONES Y LOGO FINAL */
 .label-specs{text-align:center;font-size:16px;font-weight:700;color:#000;letter-spacing:.3px;margin-bottom:10px; padding:0 10px;}
 
@@ -237,15 +244,13 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
   display: flex;
   justify-content: center;
 }
-.label-brand-svg {
-    height: 36px;
-    width: auto;
-}
+/* Actualización del estilo del logo con imagen externa */
+.label-brand img{height:40px; object-fit:contain; filter: grayscale(100%);}
 
 .label.is-repair { display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; padding: 0 !important; }
 .label.is-repair > *:not(.label-sku):not(.label-brand) { display: none !important; }
 .label.is-repair .label-sku { display: block !important; transform: rotate(-90deg) !important; margin: 0 !important; color: #000 !important; letter-spacing: 2px !important; }
-.label.is-repair .label-brand { position: absolute !important; bottom: 20px !important; left: 0; right: 0; display: flex !important; justify-content: center !important;}
+.label.is-repair .label-brand { position: absolute !important; bottom: 20px !important; left: 0; right: 0; display: flex !important; justify-content: center !important; }
 
 .lbl-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .prb{background:var(--bg3);border:1px dashed var(--border2);border-radius:var(--r);padding:10px;margin-top:4px}
@@ -338,7 +343,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 .rtbl td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--t1);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rtbl tr:hover td{background:var(--bg3)}
 .rtbl-wrap{max-height:60vh;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r2);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.tag{display:inline-flex;padding:2px 7px;border-radius:99px;font-size:9px;font-weight:700;font-family:var(--mono)}
+.tag{display:inline-flex;padding:2px 7px;border-radius:99px;font-size:99px;font-weight:700;font-family:var(--mono)}
 .tag-g{background:rgba(37,99,235,.1);color:#2563eb;border:1px solid rgba(37,99,235,.25)}
 .tag-r{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}
 .tag-a{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}
@@ -416,7 +421,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 
 <div class="v on" id="v-connect">
 <div class="cx">
-  <img src="/comza-logo.svg" alt="COMZA" style="height:34px;margin-bottom:14px">
+  <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/LogoCOMZA_fd9b6abd-6503-4f9e-974f-076b91f1d0f2.png?v=1731598820" alt="COMZA" style="height:34px;margin-bottom:14px; filter: grayscale(100%);">
   <h2>Configura tu conexión</h2>
   <p>Agrega las credenciales de Shopify en las variables de entorno de Vercel.</p>
   <div class="cx-code">SHOPIFY_STORE_DOMAIN=tu-tienda<br>SHOPIFY_CLIENT_ID=...<br>SHOPIFY_CLIENT_SECRET=...<br>COMPANY_NAME=COMZA</div>
@@ -534,9 +539,7 @@ body{font-family:var(--font);background:var(--bg1);color:var(--t1);min-height:10
 
         <div class="label-specs" id="L-sp" style="display:none"></div>
         <div class="label-brand">
-            <svg class="label-brand-svg" viewBox="0 0 351 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M66.6 20.3c-7.9 0-14.7 3.3-19.3 8.7V22H31v56h16.3V50.1c0-8.8 6.5-13.5 13.9-13.5 6.9 0 11.6 4.3 11.6 12.1V78H89V45.7c0-15.6-10-25.4-22.4-25.4zM137.2 20.3c-12.4 0-22.4 9.8-22.4 25.4V78h16.3V48.7c0-7.8 4.7-12.1 11.6-12.1 7.4 0 13.9 4.7 13.9 13.5V78H170V45.7c0-15.6-10-25.4-22.8-25.4zM224.2 20.3c-15.6 0-26.6 11.1-26.6 29s11.1 29 26.6 29 26.6-11.1 26.6-29-11.1-29-26.6-29zm0 43.1c-7.4 0-11.8-6.1-11.8-14.1s4.4-14.1 11.8-14.1 11.8 6.1 11.8 14.1-4.4 14.1-11.8 14.1zM286.9 20.3V5h-16.3v17H259v13h11.6V62c0 10.4 5.9 16.3 16.1 16.3 3.9 0 7.4-.7 10.1-2.1v-12c-1.8.8-3.9 1.1-6.1 1.1-3.6 0-5.4-1.9-5.4-5.6V35h11.5V22h-11.5v-1.7zm57.2 0c-15.6 0-26.6 11.1-26.6 29s11.1 29 26.6 29 26.6-11.1 26.6-29-11.1-29-26.6-29zm0 43.1c-7.4 0-11.8-6.1-11.8-14.1s4.4-14.1 11.8-14.1 11.8 6.1 11.8 14.1-4.4 14.1-11.8 14.1z" fill="#000"/>
-            </svg>
+            <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/LogoCOMZA_fd9b6abd-6503-4f9e-974f-076b91f1d0f2.png?v=1731598820" alt="Grupo COMZA">
         </div>
       </div>
 
@@ -1007,7 +1010,7 @@ function goL(id){
   },80)}
 function togPr(){document.getElementById('prF').style.display=document.getElementById('lHP').checked?'block':'none'}
 
-// ── CONSTRUCTOR DE PRECIOS ADAPTABLES (BLANCO Y NEGRO + DISEÑO PROMO ESPECÍFICO) ──
+// ── CONSTRUCTOR DE PRECIOS ADAPTABLES ──
 function buildPricesHTML(pi, pc, prI, prC, hasPromo) {
   if (hasPromo) {
     return `
@@ -1022,16 +1025,16 @@ function buildPricesHTML(pi, pc, prI, prC, hasPromo) {
         </div>
       </div>
       <div class="price-col promo-price" style="flex: 1;">
-        <div class="price-amount">🔥 $${prI}</div>
+        <div class="price-amount"><span class="black-fire">🔥</span> $${prI} <span class="black-fire">🔥</span></div>
         <div class="price-label">IVA INCL. CON PROMOCIÓN</div>
       </div>
       <div class="price-col promo-price" style="flex: 1;">
-        <div class="price-amount">🔥 $${prC}</div>
+        <div class="price-amount"><span class="black-fire">🔥</span> $${prC} <span class="black-fire">🔥</span></div>
         <div class="price-label">EFECTIVO CON PROMOCIÓN</div>
       </div>
     `;
   } else {
-    // SIN PROMOCIÓN: Dos recuadros enormes apilados que llenan todo
+    // SIN PROMOCIÓN: Dos enormes que llenan todo
     return `
       <div class="price-col no-promo-col" style="flex: 1;">
         <div class="price-amount">$${pi}</div>
@@ -1160,13 +1163,11 @@ function buildLabelHTML(p){
      const rawSku = sku || 'S/N';
      const l = rawSku.length;
      const sz = l <= 5 ? 160 : l <= 8 ? 120 : 90;
-     // Logo incrustado también en impresión por lote
+     // Logo COMZA actualizado también en impresión por lote
      return`<div class="label print-label is-repair">
        <div class="label-sku" style="font-size:${sz}px">${esc(rawSku)}</div>
        <div class="label-brand">
-            <svg class="label-brand-svg" viewBox="0 0 351 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M66.6 20.3c-7.9 0-14.7 3.3-19.3 8.7V22H31v56h16.3V50.1c0-8.8 6.5-13.5 13.9-13.5 6.9 0 11.6 4.3 11.6 12.1V78H89V45.7c0-15.6-10-25.4-22.4-25.4zM137.2 20.3c-12.4 0-22.4 9.8-22.4 25.4V78h16.3V48.7c0-7.8 4.7-12.1 11.6-12.1 7.4 0 13.9 4.7 13.9 13.5V78H170V45.7c0-15.6-10-25.4-22.8-25.4zM224.2 20.3c-15.6 0-26.6 11.1-26.6 29s11.1 29 26.6 29 26.6-11.1 26.6-29-11.1-29-26.6-29zm0 43.1c-7.4 0-11.8-6.1-11.8-14.1s4.4-14.1 11.8-14.1 11.8 6.1 11.8 14.1-4.4 14.1-11.8 14.1zM286.9 20.3V5h-16.3v17H259v13h11.6V62c0 10.4 5.9 16.3 16.1 16.3 3.9 0 7.4-.7 10.1-2.1v-12c-1.8.8-3.9 1.1-6.1 1.1-3.6 0-5.4-1.9-5.4-5.6V35h11.5V22h-11.5v-1.7zm57.2 0c-15.6 0-26.6 11.1-26.6 29s11.1 29 26.6 29 26.6-11.1 26.6-29-11.1-29-26.6-29zm0 43.1c-7.4 0-11.8-6.1-11.8-14.1s4.4-14.1 11.8-14.1 11.8 6.1 11.8 14.1-4.4 14.1-11.8 14.1z" fill="#000"/>
-            </svg>
+            <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/LogoCOMZA_fd9b6abd-6503-4f9e-974f-076b91f1d0f2.png?v=1731598820" alt="Grupo COMZA">
        </div>
      </div>`;
   }
@@ -1187,7 +1188,7 @@ function buildLabelHTML(p){
   const g = getMeta(p, 'tipo_de_gas');
   const specs = formatSpecs(v, c, g);
   
-  // Logo incrustado SVG también aquí
+  // Logo COMZA actualizado y Emojis Negros también en impresión por lote
   return`<div class="label print-label${hasPromo?' has-promo':''}">
     <div class="label-name">${esc(displayName)}</div>
     <div class="label-sku" style="font-size:${sz}px">${esc(skuTxt)}</div>
@@ -1196,9 +1197,7 @@ function buildLabelHTML(p){
     </div>
     ${specs?`<div class="label-specs">${esc(specs)}</div>`:''}
     <div class="label-brand">
-        <svg class="label-brand-svg" viewBox="0 0 351 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M66.6 20.3c-7.9 0-14.7 3.3-19.3 8.7V22H31v56h16.3V50.1c0-8.8 6.5-13.5 13.9-13.5 6.9 0 11.6 4.3 11.6 12.1V78H89V45.7c0-15.6-10-25.4-22.4-25.4zM137.2 20.3c-12.4 0-22.4 9.8-22.4 25.4V78h16.3V48.7c0-7.8 4.7-12.1 11.6-12.1 7.4 0 13.9 4.7 13.9 13.5V78H170V45.7c0-15.6-10-25.4-22.8-25.4zM224.2 20.3c-15.6 0-26.6 11.1-26.6 29s11.1 29 26.6 29 26.6-11.1 26.6-29-11.1-29-26.6-29zm0 43.1c-7.4 0-11.8-6.1-11.8-14.1s4.4-14.1 11.8-14.1 11.8 6.1 11.8 14.1-4.4 14.1-11.8 14.1zM286.9 20.3V5h-16.3v17H259v13h11.6V62c0 10.4 5.9 16.3 16.1 16.3 3.9 0 7.4-.7 10.1-2.1v-12c-1.8.8-3.9 1.1-6.1 1.1-3.6 0-5.4-1.9-5.4-5.6V35h11.5V22h-11.5v-1.7zm57.2 0c-15.6 0-26.6 11.1-26.6 29s11.1 29 26.6 29 26.6-11.1 26.6-29-11.1-29-26.6-29zm0 43.1c-7.4 0-11.8-6.1-11.8-14.1s4.4-14.1 11.8-14.1 11.8 6.1 11.8 14.1-4.4 14.1-11.8 14.1z" fill="#000"/>
-        </svg>
+        <img src="https://cdn.shopify.com/s/files/1/0674/0387/4479/files/LogoCOMZA_fd9b6abd-6503-4f9e-974f-076b91f1d0f2.png?v=1731598820" alt="Grupo COMZA">
     </div>
   </div>`}
 
