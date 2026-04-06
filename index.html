@@ -985,13 +985,13 @@ function fillL(){
 
   if(hasPromo){
     document.getElementById('lPI').value=fN(p.compare_at_price);
-    document.getElementById('lPC').value=fN(Math.round(cap/1.16).toString());
+    document.getElementById('lPC').value=fN(Math.round(cap * 0.90).toString());
     document.getElementById('lHP').checked=true;togPr();
     document.getElementById('lPrI').value=fN(p.price);
-    document.getElementById('lPrC').value=fN(Math.round(price/1.16).toString());
+    document.getElementById('lPrC').value=fN(Math.round(price * 0.90).toString());
   }else{
     document.getElementById('lPI').value=fN(p.price);
-    document.getElementById('lPC').value=fN(Math.round(price/1.16).toString());
+    document.getElementById('lPC').value=fN(Math.round(price * 0.90).toString());
     document.getElementById('lHP').checked=false;togPr();}
 
   document.getElementById('lVolt').value = getMeta(p, 'voltaje');
@@ -1179,9 +1179,9 @@ function buildLabelHTML(p){
   const displayName=cond?`${p.title} (${cond})`:p.title;
   
   const pi = fN(hasPromo?p.compare_at_price:p.price);
-  const pc = fN(Math.round((hasPromo?cap:price)/1.16).toString());
+  const pc = fN(Math.round((hasPromo?cap:price)*0.90).toString());
   const prI = fN(p.price);
-  const prC = fN(Math.round(price/1.16).toString());
+  const prC = fN(Math.round(price*0.90).toString());
   
   const v = getMeta(p, 'voltaje');
   const c = getMeta(p, 'capacidad');
